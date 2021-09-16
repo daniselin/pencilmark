@@ -106,6 +106,10 @@ const PuzzleCell = (props) => {
 
     const size = Math.min(height, width) / 9;
 
+    const backgroundColor = (isSelected) ? "#FFD70080" :
+        (isConflict) ? "#FF634780 " :
+        (isSelectedInBoxRowCol) && "#AFEEEE80 ";
+
     let cellStyle = {
         width:size,
         height:size,
@@ -113,7 +117,8 @@ const PuzzleCell = (props) => {
         fontSize: width * .09,
         cursor: "pointer",
         borderWidth: "0px 1px 1px 0px",
-        borderStyle: "solid"
+        borderStyle: "solid",
+        backgroundColor: backgroundColor,
     }
     if (col === 3 || col === 6){
         if (row === 3 || row === 6) {
@@ -142,10 +147,7 @@ const PuzzleCell = (props) => {
         <div
             style={cellStyle}
             draggable="true"
-            className={`border-dark  
-            ${(isSelected && ("bg-warning "))}
-            ${(isConflict && ("bg-danger "))}
-            ${(isSelectedInBoxRowCol && ("bg-info "))}`}
+            className={`border-dark`}
             onClick={(e) => onClick(e)}
             onDragOver={(e) => onDragOver(e)}
             onDragStart={(e) => onDragStart(e)}

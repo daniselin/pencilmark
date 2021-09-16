@@ -3,6 +3,7 @@ import forEach from "lodash/forEach";
 import "../utils/utils";
 
 export const types = {
+    INITIALIZE_BUILD_PUZZLE: "build-puzzle/INITIALIZE_BUILD_PUZZLE",
     CELL_CLICK: "build-puzzle/CELL_CLICK",
     CONTROL_CELL_CLICK: "build-puzzle/CONTROL_CELL_CLICK",
     CELL_DRAG: "build-puzzle/CELL_DRAG",
@@ -278,6 +279,9 @@ export const actions = {
     removeErrorMessage: () => {
         return {type: types.REMOVE_ERROR_MESSAGE}
     },
+    initializeBuildPuzzle: () => {
+        return {type: types.INITIALIZE_BUILD_PUZZLE}
+    }
 }
 
 String.prototype.replaceAt = function(index, replacement) {

@@ -16,11 +16,9 @@ const Header = (props) => {
                     <div className="navbar-header">
                         <a className="navbar-brand" href="#">Pencilmark</a>
                     </div>
-                    <div className="collapsed navbar-collapse" id="pencilmark-nav-collapse">
-                        <ul className="nav navbar-nav">
-                            {children}
-                        </ul>
-                    </div>
+                    <ul className="nav navbar-nav">
+                        {children}
+                    </ul>
                 </div>
             </nav>
         </header>

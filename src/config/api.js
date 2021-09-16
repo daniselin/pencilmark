@@ -4,6 +4,8 @@ const api = {
     retrieveUser: () => API_URL + "/user/",
     createUser: () => API_URL + "/user/create/",
 
+    getProfile: (username) => API_URL + "/profile/" + username + "/",
+
     createPuzzle: () => API_URL + "/puzzle/create/",
     checkPuzzle: () => API_URL + "/puzzle/check",
 

@@ -2,17 +2,14 @@ import {connect} from "react-redux";
 import * as PropTypes from "prop-types";
 import Header from "./Header";
 import React, {useCallback, useEffect} from "react";
-import SuccessMessage from "../messages/components/SuccessMessage";
-import ErrorMessage from "../messages/components/ErrorMessage";
-import FatalErrorMessage from "../messages/components/FatalErrorMessage";
 import NavigationLink from "./NavigationLink";
 import {pick} from "lodash";
 import Footer from "./Footer";
 import Login from "../user/components/Login";
 import {bindActionCreators} from "redux";
 import {actions as userActions} from "../user";
-import PuzzleGrid from "../build-puzzle/components/PuzzleGrid";
 import PuzzleBuilder from "../build-puzzle/components/PuzzleBuilder";
+import Profile from "../profile/components/Profile";
 
 const mapStateToProps = (state) => {
     return {
@@ -39,12 +36,10 @@ const mapDispatchToProps = (dispatch) => {
 };
 const MainContainer = (props) => {
     const {
-        children,
         section,
         secondarySection,
-        title,
-        fatalErrorMessage,
         user,
+        title,
         actions
     } = props;
 
@@ -72,7 +67,7 @@ const MainContainer = (props) => {
                 <Header userName={user["username"]}>
                     {user["hasAuthenticated"] ?
                         <>
-                            <NavigationLink title={user["username"]} link={"/" + user["username"]} active={section === "home"}/>
+                            <NavigationLink title={user["username"]} link={"/user/" + user["username"]} active={section === "rofile"}/>
                             <NavigationLink title="Build Puzzle" link="/puzzle/build" active={section === "build-puzzle"}/>
                             <NavigationLink link="/login/" title="Logout" onClick={() => logoutUser()}>Logout</NavigationLink>
                         </>
@@ -84,9 +79,10 @@ const MainContainer = (props) => {
                 </Header>
 
             <>
-                {/*{section === "home" &&*/}
-                {/*<Home secondarySection={secondarySection} username={user["username"]}/>*/}
-                {/*}*/}
+                {title}
+                {section === "profile" &&
+                <Profile secondarySection={secondarySection}/>
+                }
                 {section === "build-puzzle" &&
                 <PuzzleBuilder />
                 }
@@ -101,8 +97,7 @@ const MainContainer = (props) => {
 };
 
 MainContainer.propTypes = {
-    children: PropTypes.node.isRequired,
-    section: PropTypes.oneOf(["notFound","home", "build-puzzle", "login"]).isRequired,
+    section: PropTypes.oneOf(["notFound","profile", "build-puzzle", "login"]).isRequired,
     secondarySection: PropTypes.string,
     title: PropTypes.oneOfType([
         PropTypes.string,

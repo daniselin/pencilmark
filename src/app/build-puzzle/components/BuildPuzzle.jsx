@@ -1,11 +1,9 @@
-import {pick} from "lodash";
 import {bindActionCreators} from "redux";
 import {actions as userActions} from "../../user";
 import MainContainer from "../../layout/MainContainer";
 import React from "react";
 import {connect} from "react-redux";
 import PuzzleGrid from "./PuzzleGrid";
-import TextField from "../../form/components/TextField";
 
 
 const mapStateToProps = (state) => {
@@ -23,7 +21,7 @@ const mapDispatchToProps = (dispatch) => {
 const BuildPuzzle = (props) => {
     return(
         <MainContainer section="build-puzzle"
-                       title={<h1>Build a Puzzle</h1>}>
+                       title={<h1 className='p-3'>Build a Puzzle</h1>}>
             <PuzzleGrid/>
         </MainContainer>
     );

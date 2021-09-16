@@ -5,6 +5,7 @@ import NotFound from "../app/NotFound";
 import React from "react";
 import Authentication from "../app/user/components/Authentication";
 import BuildPuzzle from "../app/build-puzzle/components/BuildPuzzle";
+import UserProfile from "../app/profile/components/UserProfile";
 
 export default (
     <ConnectedRouter history={history}>
@@ -14,6 +15,7 @@ export default (
             <Route exact path="/">
                 <Redirect to={"/login/"}/>
             </Route>
+            <Route exact path={"/user/:username"} component={UserProfile}/>
             <Route component={NotFound}/>
 
         </Switch>
