@@ -12,6 +12,7 @@ import Login from "../user/components/Login";
 import {bindActionCreators} from "redux";
 import {actions as userActions} from "../user";
 import PuzzleGrid from "../build-puzzle/components/PuzzleGrid";
+import PuzzleBuilder from "../build-puzzle/components/PuzzleBuilder";
 
 const mapStateToProps = (state) => {
     return {
@@ -67,13 +68,12 @@ const MainContainer = (props) => {
     }, [initialize]);
 
     return (
-        <div>
+        <>
                 <Header userName={user["username"]}>
                     {user["hasAuthenticated"] ?
                         <>
                             <NavigationLink title={user["username"]} link={"/" + user["username"]} active={section === "home"}/>
-                            <NavigationLink title="Build Puzzle" link="/puzzle/build"
-                                            active={section === "build-puzzle"}/>
+                            <NavigationLink title="Build Puzzle" link="/puzzle/build" active={section === "build-puzzle"}/>
                             <NavigationLink link="/login/" title="Logout" onClick={() => logoutUser()}>Logout</NavigationLink>
                         </>
                         :
@@ -83,41 +83,20 @@ const MainContainer = (props) => {
                     }
                 </Header>
 
-            <div className="d-flex justify-content-center">
+            <>
                 {/*{section === "home" &&*/}
                 {/*<Home secondarySection={secondarySection} username={user["username"]}/>*/}
                 {/*}*/}
                 {section === "build-puzzle" &&
-                <PuzzleGrid />
+                <PuzzleBuilder />
                 }
                 {section === "login" &&
                 <Login />
                 }
-            </div>
-
-            <div className="container-fluid">
-                <div className="row util-padding-top-20">
-                    <div className="col-xl-10 col-xl-offset-1 app-main-container">
-                        {fatalErrorMessage ?
-                            <FatalErrorMessage/>
-                            :
-                            (user["hasAuthenticated"] ?
-                                    <div>
-                                        {title}
-                                        <SuccessMessage/>
-                                        <ErrorMessage/>
-                                        {/*{children}*/}
-                                    </div>
-                                    :
-                                    <></>
-                            )
-                        }
-                    </div>
-                </div>
-            </div>
+            </>
 
             <Footer/>
-        </div>
+        </>
     );
 };
 

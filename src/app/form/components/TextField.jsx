@@ -59,6 +59,7 @@ const TextField = (props) => {
     return (
         <FormGroup id={id} fieldErrors={fieldErrors}>
             <Label id={id} label={label} required={required}/>
+            {type !== "textarea" ?
                 <input autoFocus={autoFocus}
                        id={id} name={name || id}
                        type={type}
@@ -68,6 +69,18 @@ const TextField = (props) => {
                        onChange={onChange}
                        disabled={disabled}
                        maxLength={maxLength}/>
+                :
+                <textarea autoFocus={autoFocus}
+                          id={id} name={name || id}
+                          type={type}
+                          lines={1}
+                          className={"form-control " + className}
+                          placeholder={placeholder}
+                          defaultValue={defaultValue}
+                          onChange={onChange}
+                          disabled={disabled}
+                          maxLength={maxLength}/>
+            }
         </FormGroup>
     );
 };

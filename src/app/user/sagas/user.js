@@ -25,7 +25,6 @@ export function* initializeUser(){
 
             const userResponse = yield call(apiAxios.get, api.retrieveUser());
             const userData = userResponse.data;
-            console.log(userData);
             yield put({
                 type: userTypes.UPDATE_USER_VALUES, userData
             });
@@ -87,17 +86,23 @@ export function* watchLogout() {
 
 export function* logoutUser() {
     const tokenState = yield select(getTokenState);
-    console.log(tokenState.refreshToken);
 
     try {
-        const response = yield call(apiAxios.post, api.blacklistToken(), {"refresh_token": tokenState.refreshToken});
+        yield call(apiAxios.post, api.blacklistToken(), {refresh_token: tokenState.refreshToken});
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         yield put({type: tokenTypes.CLEAR_TOKENS});
         yield put({type: userTypes.CLEAR_USER_VALUES});
         yield put( {type: formTypes.RESET_FORM});
+        window.location.reload()
     } catch (error) {
         console.log(error);
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        yield put({type: tokenTypes.CLEAR_TOKENS});
+        yield put({type: userTypes.CLEAR_USER_VALUES});
+        yield put( {type: formTypes.RESET_FORM});
+        window.location.reload()
     }
 };
 
@@ -130,7 +135,6 @@ export function* loginUser(action){
 
             const userResponse = yield call(apiAxios.get, api.retrieveUser());
             const userData = userResponse.data;
-            console.log(userData);
             yield put( {
                 type: userTypes.UPDATE_USER_VALUES, userData
             })

@@ -7,7 +7,7 @@ import {createSizeAction, listenResize} from 'redux-windowsize';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 store.dispatch(createSizeAction(window));
-listenResize(store, window, 50);
+listenResize(store, window, 10);
 
 render((
     <Provider store={store}>

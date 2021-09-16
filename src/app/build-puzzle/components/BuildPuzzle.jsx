@@ -24,7 +24,7 @@ const BuildPuzzle = (props) => {
     return(
         <MainContainer section="build-puzzle"
                        title={<h1>Build a Puzzle</h1>}>
-                <PuzzleGrid />
+            <PuzzleGrid/>
         </MainContainer>
     );
 };

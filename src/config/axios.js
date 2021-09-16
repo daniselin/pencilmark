@@ -19,19 +19,20 @@ apiAxios.interceptors.request.use(function (config) {
     return config;
 });
 
-apiAxios.interceptors.request.use(function (response) {
-    return response;
-}, async function (error) {
+apiAxios.interceptors.response.use(undefined,  async function (error) {
     const originalRequest = error.config;
-    if (error.response.status === 403 && !originalRequest._retry) {
+    if ((error.response.status === 401 || error.response.code === "token_not_valid") && !originalRequest._retry) {
         originalRequest._retry = true;
-        const access_token = await apiAxios.post(api.refreshToken(), {refresh: localStorage.getItem('refresh')});
-        axios.defaults.headers['Authorization'] = 'JWT ' + access_token;
+        const response = await apiAxios.post(api.refreshToken(), {refresh: localStorage.getItem('refresh')});
+        console.log(response);
+        localStorage.setItem("access", response.data["access"]);
+        localStorage.setItem("refresh", response.data["refresh"]);
+
         return apiAxios(originalRequest);
     } else {
         return Promise.reject({...error, message: error.message});
     }
-});
+})
 
 export function getCookie(name) {
     let cookieValue = null;

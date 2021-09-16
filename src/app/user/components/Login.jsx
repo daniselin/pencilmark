@@ -69,125 +69,127 @@ const Login = (props) => {
     });
 
     return (
-        <div className="row">
-            <div className="col">
-                <div className="btn-group btn-group-toggle" data-toggle="buttons">
-                    <Radio
-                           className="btn-check"
-                           onChange={onChange}
-                           isChecked={formType === "sign-in"}
-                           label="Sign In"
-                           id="sign-in"
-                           name="authenticate"
-                    />
-                    <br/>
-                    <Radio
-                           className="btn-check"
-                           onChange={onChange}
-                           isChecked={formType === "sign-up"}
-                           label="Sign Up"
-                           id="sign-up"
-                           name="authenticate"
-                    />
-                </div>
-            </div>
-            <Form>
-                <div>
-                    <div className="row util-padding-top-20">
+        <div className="d-flex justify-content-center">
+            <div className="row">
+                <div className="col">
+                    <div className="btn-group btn-group-toggle" data-toggle="buttons">
+                        <Radio
+                               className="btn-check"
+                               onChange={onChange}
+                               isChecked={formType === "sign-in"}
+                               label="Sign In"
+                               id="sign-in"
+                               name="authenticate"
+                        />
+                        <br/>
+                        <Radio
+                               className="btn-check"
+                               onChange={onChange}
+                               isChecked={formType === "sign-up"}
+                               label="Sign Up"
+                               id="sign-up"
+                               name="authenticate"
+                        />
                     </div>
-                    <div className="row util-padding-top-20">
-                        <div className="col-md-6">
-                            <TextField
-                                id="username"
-                                placeholder="username"
-                                label="Username"
-                                required={true}
-                                disabled={false}
-                                maxLength={150}
-                                autoFocus={true}
-                            />
+                </div>
+                <Form>
+                    <div>
+                        <div className="row util-padding-top-20">
                         </div>
-                    </div>
-                    {formType === 'sign-in' ?
-                        <>
-                            <div className="row util-padding-top-20">
-                                <div className="col-md-6">
-                                    <TextField
-                                        id="password"
-                                        placeholder="password"
-                                        label="Password"
-                                        required={true}
-                                        disabled={false}
-                                        maxLength={150}
-                                        autoFocus={false}
-                                        type="password"
-                                    />
-                                </div>
+                        <div className="row util-padding-top-20">
+                            <div className="col-md-6">
+                                <TextField
+                                    id="username"
+                                    placeholder="username"
+                                    label="Username"
+                                    required={true}
+                                    disabled={false}
+                                    maxLength={150}
+                                    autoFocus={true}
+                                />
                             </div>
+                        </div>
+                        {formType === 'sign-in' ?
+                            <>
+                                <div className="row util-padding-top-20">
+                                    <div className="col-md-6">
+                                        <TextField
+                                            id="password"
+                                            placeholder="password"
+                                            label="Password"
+                                            required={true}
+                                            disabled={false}
+                                            maxLength={150}
+                                            autoFocus={false}
+                                            type="password"
+                                        />
+                                    </div>
+                                </div>
 
-                            <div className="row util-padding-top-20">
-                                <div className="col-md-6">
-                                    <SubmitButton
-                                        type="button"
-                                        label="Login"
-                                        onClick={onLoginUser}
-                                        isLoading={isLoggingIn || isLoggingInAllowed}
-                                        loadingLabel={
-                                            isLoggingIn ?
-                                                <i className="fa fa-spinner fa-spin"/>
-                                                :
-                                                !isLoggingInAllowed ?
-                                                    "Login"
+                                <div className="row util-padding-top-20">
+                                    <div className="col-md-6">
+                                        <SubmitButton
+                                            type="button"
+                                            label="Login"
+                                            onClick={onLoginUser}
+                                            isLoading={isLoggingIn || isLoggingInAllowed}
+                                            loadingLabel={
+                                                isLoggingIn ?
+                                                    <i className="fa fa-spinner fa-spin"/>
                                                     :
-                                                    ""
-                                        }
-                                    />
+                                                    !isLoggingInAllowed ?
+                                                        "Login"
+                                                        :
+                                                        ""
+                                            }
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        </>
-                        :
-                        <>
-                            <div className="row util-padding-top-20">
-                                <div className="col-md-6">
-                                    <TextField
-                                        id="email"
-                                        placeholder="email"
-                                        label="Email"
-                                        required={true}
-                                        disabled={false}
-                                        maxLength={150}
-                                        autoFocus={false}
-                                        type="email"
-                                    />
+                            </>
+                            :
+                            <>
+                                <div className="row util-padding-top-20">
+                                    <div className="col-md-6">
+                                        <TextField
+                                            id="email"
+                                            placeholder="email"
+                                            label="Email"
+                                            required={true}
+                                            disabled={false}
+                                            maxLength={150}
+                                            autoFocus={false}
+                                            type="email"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="row util-padding-top-20">
-                                <div className="col-md-6">
-                                    <TextField
-                                        id="password"
-                                        placeholder="password"
-                                        label="Password"
-                                        required={true}
-                                        disabled={false}
-                                        maxLength={150}
-                                        autoFocus={false}
-                                        type="password"
-                                    />
+                                <div className="row util-padding-top-20">
+                                    <div className="col-md-6">
+                                        <TextField
+                                            id="password"
+                                            placeholder="password"
+                                            label="Password"
+                                            required={true}
+                                            disabled={false}
+                                            maxLength={150}
+                                            autoFocus={false}
+                                            type="password"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="row util-padding-top-20">
-                                <div className="col-md-6">
-                                    <SubmitButton
-                                        type="button"
-                                        label="Signup"
-                                        onClick={onSignupUser}
-                                    />
+                                <div className="row util-padding-top-20">
+                                    <div className="col-md-6">
+                                        <SubmitButton
+                                            type="button"
+                                            label="Signup"
+                                            onClick={onSignupUser}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        </>
-                    }
-                </div>
-            </Form>
+                            </>
+                        }
+                    </div>
+                </Form>
+            </div>
         </div>
     );
 };

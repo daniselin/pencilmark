@@ -9,7 +9,6 @@ export const types = {
     LOGIN_REQUIRED: "user/LOGIN_REQUIRED",
     UPDATE_USER_VALUES: "user/UPDATE_USER_VALUES",
     CLEAR_USER_VALUES: "user/CLEAR_USER_VALUES",
-
 }
 
 export const initialState = {
@@ -30,7 +29,6 @@ export default (state = initialState, action) => {
         case types.SIGN_IN_USER_REQUEST:
             return {...state, isLoggingIn: true};
         case types.UPDATE_USER_VALUES:
-            console.log(action);
             return {...state,
                 username: action.userData.username,
                 email: action.userData.email,

@@ -1,14 +1,16 @@
-import {bindActionCreators} from "redux";
 import React, {useCallback, useEffect} from "react";
 import {connect} from "react-redux";
-import {actions as buildPuzzleActions} from "..";
 import {pick} from "lodash";
+import some from "lodash/some";
+import "./PuzzleCell.css";
 
 
 const mapStateToProps = (state) => {
     return {
         ...pick(state.buildPuzzle, [
-            "selectedCell"
+            "selectedCell",
+            "selectedCells",
+            "conflictCells"
         ])
     };
 };
@@ -20,6 +22,8 @@ const mapDispatchToProps = (dispatch) => {
 const PuzzleCell = (props) => {
     const {
         selectedCell,
+        selectedCells,
+        conflictCells,
         height,
         width,
         row,
@@ -29,53 +33,125 @@ const PuzzleCell = (props) => {
         value
     } = props;
 
-    const isSelected = (selectedCell.box === box && selectedCell.cell === cell);
-    const selectedIndex = (selectedCell.box  - 1) * 9 + (selectedCell.cell - 1);
-    const cellIndex = (box  - 1) * 9 + (cell - 1);
+    const isSelected = (selectedCell.row === row && selectedCell.col === col) ||
+        (some(selectedCells, {box: box, cell: cell, row: row, col: col}));
 
     const isSelectedInBoxRowCol = (selectedCell.box === box ||
         selectedCell.row === row  ||
         selectedCell.col === col);
 
+    const isConflict = (some(conflictCells, {row: row, col: col}));
 
-    const onKeyStroke = useCallback ((e) => {
+    const changeCellValue = useCallback ((e) => {
         if (isSelected) {
-            const {onKeyStroke} = props;
-            if (onKeyStroke){
-                console.log(e.key);
-                if (e.key in [9, 1, 2, 3, 4, 5, 6, 7, 8, 9]) {
-                    onKeyStroke(e.key);
+            const {changeCellValue, deleteCellValue} = props;
+            if (changeCellValue){
+                if (e.key in [9, 1, 2, 3, 4, 5, 6, 7, 8, 0]) {
+                    changeCellValue(e.key);
+                }
+                else if (e.key === "Backspace") {
+                    deleteCellValue();
                 }
             };
         }
     }, [props]);
 
     useEffect(() => {
-        document.addEventListener('keydown', onKeyStroke);
+        document.addEventListener('keydown', changeCellValue);
         return function cleanup() {
-            document.removeEventListener('keydown', onKeyStroke);
+            document.removeEventListener('keydown', changeCellValue);
         }
     });
 
-    const onClick = useCallback (() => {
-        const {onClick} = props;
-        if (onClick) {
-            onClick(box, cell, row, col);
+    const onClick = useCallback ((e) => {
+        const {onClick, onControlClick} = props;
+        if (e.ctrlKey) {
+            if (onControlClick){
+                onControlClick(box, cell, row, col);
+            }
+        }
+        else {
+            if (onClick) {
+                onClick(box, cell, row, col);
+            }
         }
     }, [props]);
 
-    const size = Math.min(height, width) / 3 - 1;
+    const onDragOver = useCallback( (e) => {
+        e.dataTransfer.dropEffect = "copy";
+        const {onDrag, onControlDrag} = props;
+        if (e.ctrlKey) {
+            if (onControlDrag) {
+                onControlDrag(box, cell, row, col);
+            }
+        } else {
+            if (onDrag) {
+                onDrag(box, cell, row, col);
+            }
+        }
+    }, [props]);
 
-    const cellStyle = {
+    const onDragStart = useCallback( (e) => {
+        e.dataTransfer.effectAllowed = "copyMove";
+        const {onDragStart, onControlDragStart} = props;
+        if (e.ctrlKey) {
+            if (onControlDragStart) {
+                onControlDragStart(box, cell, row, col);
+            }
+        }
+        else if (onDragStart) {
+            onDragStart();
+        };
+    }, [props]);
+
+    const size = Math.min(height, width) / 9;
+
+    let cellStyle = {
         width:size,
         height:size,
         textAlign:"center",
-        verticalAlign:"middle"
+        fontSize: width * .09,
+        cursor: "pointer",
+        borderWidth: "0px 1px 1px 0px",
+        borderStyle: "solid"
+    }
+    if (col === 3 || col === 6){
+        if (row === 3 || row === 6) {
+            cellStyle["borderWidth"] = "0px 2px 2px 0px"
+        }
+        else {
+            cellStyle["borderWidth"] = "0px 2px 1px 0px"
+        }
+    } else if (row === 3 || row === 6){
+        cellStyle["borderWidth"] = "0px 1px 2px 0px"
+        if (col === 1) {
+            cellStyle["borderWidth"] = "0px 1px 2px 2px"
+        }
+        if (col === 9) {
+            cellStyle["borderWidth"] = "0px 2px 2px 0px"
+        }
+    } else if (col === 1) {
+        cellStyle["borderWidth"] = "0px 1px 1px 2px"
+    } else if (col === 9) {
+        cellStyle["borderWidth"] = "0px 2px 1px 0px"
     }
 
+
+
     return(
-        <div style={cellStyle} className={'border border-1 border-dark' + (isSelected && " bg-warning") + (isSelectedInBoxRowCol && " bg-info")} onClick={() => onClick()}>
-            {value === ("0" || 0) ? " ": value}
+        <div
+            style={cellStyle}
+            draggable="true"
+            className={`border-dark  
+            ${(isSelected && ("bg-warning "))}
+            ${(isConflict && ("bg-danger "))}
+            ${(isSelectedInBoxRowCol && ("bg-info "))}`}
+            onClick={(e) => onClick(e)}
+            onDragOver={(e) => onDragOver(e)}
+            onDragStart={(e) => onDragStart(e)}
+            unselectable="on"
+        >
+            {(value === "_") ? " ": value}
         </div>
     );
 };

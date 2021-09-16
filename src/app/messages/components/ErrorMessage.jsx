@@ -1,45 +1,29 @@
-import {actions} from "../index";
-import {connect} from "react-redux";
-import {bindActionCreators} from "redux";
-import {useEffect} from "react";
-
-const mapStateToProps = (state) => {
-    if (state.messages && state.messages.errorMessage) {
-        return {
-            errorMessage: state.messages.errorMessage
-        };
-    }
-    return state;
-};
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        actions: bindActionCreators({
-            resetErrorMessage: actions.resetErrorMessage
-        }, dispatch)
-    };
-};
+import React, {useCallback} from "react";
 
 const ErrorMessage = (props) => {
-    const {actions, errorMessage} = props;
-    const {resetErrorMessage} = actions;
+    const {errorMessage} = props;
 
-    useEffect(() => {
-        return () => resetErrorMessage;
-    }, [resetErrorMessage]);
-
-    if (!errorMessage) {
-        return false
-    };
+    const onClick = useCallback ((e) => {
+        const {onClick} = props;
+        if (onClick) {
+            onClick(e);
+        }
+    }, [props]);
 
     return (
         <div className="alert alert-danger alert-icon" role="alert">
-            {errorMessage}
-            <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <div className="row">
+                <div className="col-2">
+                    <button type="button" className="close btn btn-sm btn-danger" onClick={(e) => {onClick(e)}}>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div className="col-10">
+                    Error: {errorMessage}
+                </div>
+            </div>
         </div>
     );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ErrorMessage);
+export default ErrorMessage;

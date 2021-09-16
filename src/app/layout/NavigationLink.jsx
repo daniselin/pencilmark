@@ -17,8 +17,8 @@ const NavigationLink = (props) => {
     }, [props, onClick]);
 
     return (
-        <li role="presentation" className={active ? "active" : ""}>
-            <Link to={link} onClick={onClick ? (e) => onSelect(e) : () => {} }>{title}</Link>
+        <li role="presentation" className={"nav-item btn btn-dark text-light m-2 " + (active ? "active" : "")}>
+            <Link className="text-light" to={link} onClick={onClick ? (e) => onSelect(e) : () => {} }>{title}</Link>
         </li>
     )
 }

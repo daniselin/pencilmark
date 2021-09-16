@@ -5,10 +5,12 @@ const api = {
     createUser: () => API_URL + "/user/create/",
 
     createPuzzle: () => API_URL + "/puzzle/create/",
+    checkPuzzle: () => API_URL + "/puzzle/check",
 
     obtainToken: () => API_URL + "/token/obtain/",
     refreshToken: () => API_URL + "/token/refresh/",
     blacklistToken: () => API_URL + "/logout/",
+
     verifyToken: () => API_URL + "/token/verify",
 
     hello: () => API_URL + "/hello/",

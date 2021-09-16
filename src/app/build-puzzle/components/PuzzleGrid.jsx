@@ -1,7 +1,9 @@
 import React from "react";
 import {connect} from "react-redux";
-import PuzzleBox from "./PuzzleBox";
+import PuzzleBox from "./PuzzleCol";
 import {pick} from "lodash";
+import PuzzleRow from "./PuzzleCol";
+import PuzzleCol from "./PuzzleCol";
 
 
 const mapStateToProps = (state) => {
@@ -22,32 +24,25 @@ const PuzzleGrid = (props) => {
         width
     } = props;
 
-    const size = Math.min(height, width) * .6;
+    const size = Math.min(height, width) * .85;
 
     const gridStyle = {
-        height: size,
+        height: size + 3,
         width: size,
-        backgroundColor: "lightblue"
     };
 
 
     return(
-        <div className='d-flex justify-content-center' style={gridStyle} >
-            <div>
-                <PuzzleBox height={size} width={size} box={1} row={1} col={1} value={cells.slice(0, 9)}/>
-                <PuzzleBox height={size} width={size} box={2} row={4} col={1} value={cells.slice(9, 18)}/>
-                <PuzzleBox height={size} width={size} box={3} row={7} col={1} value={cells.slice(18, 27)}/>
-            </div>
-            <div>
-                <PuzzleBox height={size} width={size} box={4} row={1} col={4} value={cells.slice(27, 36)}/>
-                <PuzzleBox height={size} width={size} box={5} row={4} col={4} value={cells.slice(36, 45)}/>
-                <PuzzleBox height={size} width={size} box={6} row={7} col={4} value={cells.slice(45, 54)}/>
-            </div>
-            <div>
-                <PuzzleBox height={size} width={size} box={7} row={1} col={7} value={cells.slice(54, 63)}/>
-                <PuzzleBox height={size} width={size} box={8} row={4} col={7} value={cells.slice(63, 72)}/>
-                <PuzzleBox height={size} width={size} box={9} row={7} col={7} value={cells.slice(72, 81)}/>
-            </div>
+        <div className='d-flex justify-content-center border border-2 border-dark' style={gridStyle}>
+            <PuzzleCol height={size} width={size} col={1} value={cells.slice(0, 9)}/>
+            <PuzzleCol height={size} width={size} col={2} value={cells.slice(9, 18)}/>
+            <PuzzleCol height={size} width={size} col={3} value={cells.slice(18, 27)}/>
+            <PuzzleCol height={size} width={size} col={4} value={cells.slice(27, 36)}/>
+            <PuzzleCol height={size} width={size} col={5} value={cells.slice(36, 45)}/>
+            <PuzzleCol height={size} width={size} col={6} value={cells.slice(45, 54)}/>
+            <PuzzleCol height={size} width={size} col={7} value={cells.slice(54, 63)}/>
+            <PuzzleCol height={size} width={size} col={8} value={cells.slice(63, 72)}/>
+            <PuzzleCol height={size} width={size} col={9} value={cells.slice(72, 81)}/>
         </div>
     );
 };
