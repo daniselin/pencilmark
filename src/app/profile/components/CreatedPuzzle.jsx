@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React from "react";
 import {connect} from "react-redux";
 import {formatDate} from "../../utils/utils";
 import SmallGrid from "../../SmallGrid";
@@ -26,7 +26,7 @@ const CreatedPuzzle = (props) => {
     // }, [createdPuzzleRef]);
 
     return(
-        <div className='card justify-content-center'>
+        <div className='card justify-content-center mb-4'>
             <div className='card-header'>
                 {puzzle["name"]}
             </div>

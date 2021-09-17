@@ -1,6 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
-import {map, pick} from "lodash";
+import {map} from "lodash";
 import SavedPuzzle from "./SavedPuzzle";
 
 

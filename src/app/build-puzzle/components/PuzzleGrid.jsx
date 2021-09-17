@@ -1,9 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
-import PuzzleBox from "./PuzzleCol";
-import {pick} from "lodash";
-import PuzzleRow from "./PuzzleCol";
 import PuzzleCol from "./PuzzleCol";
+import {pick} from "lodash";
 
 
 const mapStateToProps = (state) => {
@@ -24,7 +22,7 @@ const PuzzleGrid = (props) => {
         width
     } = props;
 
-    const size = Math.min(height, width) * .85;
+    const size = Math.min(height, width) * .80;
 
     const gridStyle = {
         height: size + 3,

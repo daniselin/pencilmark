@@ -7,7 +7,7 @@ import {types as messageTypes} from "../../messages";
 import {types as formTypes} from "../../form";
 import {types as tokenTypes} from "../../token";
 import has from "lodash/has";
-import { push } from 'react-router-redux';
+import {push} from 'react-router-redux';
 
 export const getFormState = state => state.form;
 export const getTokenState = state => state.token;

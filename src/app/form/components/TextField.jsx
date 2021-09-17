@@ -1,6 +1,6 @@
 import has from "lodash/has";
-import { pick } from "lodash"
-import React, { useCallback } from "react";
+import {pick} from "lodash"
+import React, {useCallback} from "react";
 import {actions as formActions} from "../index";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";

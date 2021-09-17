@@ -18,7 +18,7 @@ const SavedPuzzle = (props) => {
     } = props;
 
     return(
-        <div className='card'>
+        <div className='card mb-2'>
             <div className='card-header'>
                 {puzzle["name"]}
             </div>

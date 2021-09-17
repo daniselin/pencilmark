@@ -1,8 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
-import PuzzleBox from "./PuzzleCol";
 import {bindActionCreators} from "redux";
-import {actions as userActions} from "../../user";
 import {actions as buildPuzzleActions} from "../index";
 import TextField from "../../form/components/TextField";
 import KeyPadButton from "./KeyPadButton";

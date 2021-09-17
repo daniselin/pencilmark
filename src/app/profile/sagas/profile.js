@@ -2,7 +2,6 @@ import {call, put, takeEvery} from "redux-saga/effects";
 import {types as profileTypes} from "..";
 import apiAxios from "../../../config/axios";
 import api from "../../../config/api";
-import {types as buildPuzzleTypes} from "../../build-puzzle";
 
 export function* watchInitializeProfile() {
     yield takeEvery(profileTypes.INITIALIZE_PROFILE, initializeProfile);

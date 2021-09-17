@@ -1,11 +1,6 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React from "react";
 import {connect} from "react-redux";
 import {pick} from "lodash/object";
-import Header from "../../layout/Header";
-import PuzzleBuilder from "../../build-puzzle/components/PuzzleBuilder";
-import Login from "../../user/components/Login";
-import SavedPuzzles from "./SavedPuzzles";
-import CreatedPuzzles from "./CreatedPuzzles";
 import ProfileMainContent from "./ProfileMainContent";
 
 

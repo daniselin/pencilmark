@@ -1,6 +1,5 @@
 import React from "react";
 import {connect} from "react-redux";
-import PuzzleBox from "./PuzzleCol";
 import {pick} from "lodash";
 import TextField from "../../form/components/TextField";
 import PuzzleGrid from "./PuzzleGrid";

@@ -92,10 +92,9 @@ const Login = (props) => {
                         />
                     </div>
                 </div>
+                <br/>
                 <Form>
                     <div>
-                        <div className="row util-padding-top-20">
-                        </div>
                         <div className="row util-padding-top-20">
                             <div className="col-md-6">
                                 <TextField
@@ -109,6 +108,7 @@ const Login = (props) => {
                                 />
                             </div>
                         </div>
+                        <br/>
                         {formType === 'sign-in' ?
                             <>
                                 <div className="row util-padding-top-20">
@@ -125,7 +125,7 @@ const Login = (props) => {
                                         />
                                     </div>
                                 </div>
-
+                                <br/>
                                 <div className="row util-padding-top-20">
                                     <div className="col-md-6">
                                         <SubmitButton
@@ -162,6 +162,7 @@ const Login = (props) => {
                                         />
                                     </div>
                                 </div>
+                                <br/>
                                 <div className="row util-padding-top-20">
                                     <div className="col-md-6">
                                         <TextField
@@ -176,6 +177,7 @@ const Login = (props) => {
                                         />
                                     </div>
                                 </div>
+                                <br/>
                                 <div className="row util-padding-top-20">
                                     <div className="col-md-6">
                                         <SubmitButton
