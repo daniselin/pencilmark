@@ -12,7 +12,7 @@ const mapDispatchToProps = (dispatch) => {
     return {};
 };
 
-const SavedPuzzles = (props) => {
+const SavedPuzzle = (props) => {
     const {
         puzzle
     } = props;
@@ -32,4 +32,4 @@ const SavedPuzzles = (props) => {
     );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SavedPuzzles);
+export default connect(mapStateToProps, mapDispatchToProps)(SavedPuzzle);

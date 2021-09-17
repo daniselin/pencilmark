@@ -20,7 +20,7 @@ const SavedPuzzles = (props) => {
         <div className='container-fluid'>
             {map(savedPuzzles, (puzzle, i) =>
                 <div className={width < 970 ? "col-6" : "col-4"}>
-                    <SavedPuzzle key={i} puzzle={puzzle}/>
+                    <SavedPuzzle key={puzzle["name"]} puzzle={puzzle}/>
                 </div> )}
         </div>
     );

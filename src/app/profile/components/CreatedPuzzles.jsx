@@ -24,7 +24,7 @@ const CreatedPuzzles = (props) => {
         <div className='container-fluid'>
             <div className="row">
                 {map(createdPuzzles, (puzzle, i) =>
-                    <div key={i} className={width < 970 ? "col-6" : "col-4"}>
+                    <div key={puzzle["name"]} className={width < 970 ? "col-6" : "col-4"}>
                         <CreatedPuzzle puzzle={puzzle}/>
                     </div> )}
             </div>
