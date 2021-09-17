@@ -1,3 +1,7 @@
+export const formatDate = date => {
+    return date.substring(5, 7) + "/" + date.substring(8, 10) + "/" + date.substring(0, 4);
+}
+
 export const orderByRows = cells => {
     let cellsByRows = '_________________________________________________________________________________';
 
@@ -47,4 +51,55 @@ export const orderByRows = cells => {
     }
 
     return cellsByRows;
+}
+
+export const orderByCols = cells => {
+    let cellsByCols = '_________________________________________________________________________________';
+
+    for (let i = 0; i < cells.length; i++) {
+        let decrease = (Math.floor(i / 9) === Math.floor(i / 10));
+        if (!decrease) {
+            if (i % 10 === 0) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 1) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i + 8) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 2) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i + 16) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 3) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i + 24) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 4) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i + 32) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 5) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i + 40) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 6) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i + 48) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 7) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i + 56) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 8) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i + 64) + cellsByCols.substring(i + 1);
+            }
+        } else {
+            if (i % 10 === 0) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 2) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i - 64) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 3) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i - 56) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 4) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i - 48) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 5) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i - 40) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 6) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i - 32) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 7) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i - 24) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 8) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i - 16) + cellsByCols.substring(i + 1);
+            } else if (i % 10 === 9) {
+                cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i - 8) + cellsByCols.substring(i + 1);
+            }
+        }
+    }
+
+    return cellsByCols;
 }

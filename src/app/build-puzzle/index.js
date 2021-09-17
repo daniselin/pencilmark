@@ -16,6 +16,7 @@ export const types = {
     FOCUS_OFF_CELLS: "build-puzzle/FOCUS_OFF_CELLS",
     UPDATE_CONFLICT_CELLS: "build-puzzle/UPDATE_CONFLICT_CELLS",
     CREATE_PUZZLE_REQUEST: "build-puzzle/CREATE_PUZZLE_REQUEST",
+    SAVE_PUZZLE_REQUEST: "build-puzzle/SAVE_PUZZLE_REQUEST",
     CREATE_PUZZLE_FAILURE: "build-puzzle/CREATE_PUZZLE_FAILURE",
     REMOVE_ERROR_MESSAGE: "build-puzzle/REMOVE_ERROR_MESSAGE",
 };
@@ -281,6 +282,9 @@ export const actions = {
     },
     initializeBuildPuzzle: () => {
         return {type: types.INITIALIZE_BUILD_PUZZLE}
+    },
+    savePuzzle: () => {
+        return {type: types.SAVE_PUZZLE_REQUEST}
     }
 }
 

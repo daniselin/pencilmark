@@ -61,14 +61,11 @@ const PuzzleBuilder = (props) => {
                         </>
                     )}
                     <br/>
-                    <div className='row justify-content-end'>
-                        <div className={width > 750 ? 'col-6' : 'col-12'}>
+                    <div className='row justify-content-around'>
+                        <div className={width > 970 ? 'col-6' : 'col-12'}>
                             <PuzzleGrid/>
                         </div>
-                        <div className='col-1'>
-                            <br/>
-                        </div>
-                        <div className={width > 750 ? 'col-5' : 'col-12'}>
+                        <div className={width > 970 ? 'col-5' : 'col-12'}>
                             <KeyPad/>
                         </div>
                     </div>

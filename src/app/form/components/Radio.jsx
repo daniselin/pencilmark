@@ -1,8 +1,6 @@
-import {Link} from "react-router-dom";
 import React, {useCallback} from "react";
 import * as PropTypes from "prop-types";
 import FormGroup from "./FormGroup";
-import Label from "./Label";
 
 const Radio = (props) => {
     const {

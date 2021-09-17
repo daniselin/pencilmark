@@ -11,14 +11,16 @@ const Header = (props) => {
 
     return (
         <header>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
+            <nav className="navbar navbar-expand-sm navbar-light bg-light">
                 <div className="container-fluid">
                     <div className="navbar-header">
                         <a className="navbar-brand" href="#">Pencilmark</a>
                     </div>
-                    <ul className="nav navbar-nav">
-                        {children}
-                    </ul>
+                    <div className="collapse navbar-collapse">
+                        <ul className="nav navbar-nav">
+                            {children}
+                        </ul>
+                    </div>
                 </div>
             </nav>
         </header>

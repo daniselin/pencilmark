@@ -1,8 +1,6 @@
-import React, {useCallback, useEffect} from "react";
+import React, {useCallback} from "react";
 import {connect} from "react-redux";
 import {pick} from "lodash";
-import some from "lodash/some";
-import "./PuzzleCell.css";
 
 
 const mapStateToProps = (state) => {

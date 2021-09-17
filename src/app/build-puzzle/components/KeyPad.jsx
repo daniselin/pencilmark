@@ -20,6 +20,7 @@ const mapDispatchToProps = (dispatch) => {
             changeCellValue: buildPuzzleActions.changeCellValue,
             deleteCellValue: buildPuzzleActions.deleteCellValue,
             createPuzzle: buildPuzzleActions.createPuzzle,
+            savePuzzle: buildPuzzleActions.savePuzzle
         }, dispatch)};
 };
 
@@ -37,6 +38,7 @@ const KeyPad = (props) => {
         changeCellValue,
         deleteCellValue,
         createPuzzle,
+        savePuzzle
     } = actions;
 
     const keyPadStyle = {
@@ -145,7 +147,7 @@ const KeyPad = (props) => {
             <div className='row'>
                 <div className='col-3 g-0'>
                     <KeyPadButton color="#401153" value={"Save"} onClick={(e) => {
-                        deleteCellValue();
+                        savePuzzle();
                         e.stopPropagation();
                     }}/>
                 </div>

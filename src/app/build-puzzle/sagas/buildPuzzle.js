@@ -4,7 +4,8 @@ import apiAxios from "../../../config/axios";
 import api from "../../../config/api";
 import solve from '@mattflow/sudoku-solver';
 import "../../utils/utils";
-import {orderByRows} from "../../utils/utils";
+import {orderByCols, orderByRows} from "../../utils/utils";
+import {push} from "react-router-redux";
 
 const getBuildPuzzleState = (state) => state.buildPuzzle;
 const getUserState = (state) => state.user;
@@ -52,8 +53,6 @@ export function* createPuzzle(){
 
     const cellsByRows = orderByRows(cells);
 
-
-
     if (!formState.values['puzzle-name']) {
         yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "A puzzle name is required"}});
     }
@@ -68,17 +67,14 @@ export function* createPuzzle(){
 
     else {
         try {
-            const solution = solve(cellsByRows, {emptyValue: "_", maxIterations: 1000000});
-        } catch (e) {
-            yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: e.message}});
-        }
-        try {
+            const solution = orderByCols(solve(cellsByRows, {emptyValue: "_", maxIterations: 1000000}));
             const createResponse = yield call(apiAxios.post, api.createPuzzle(),
                 {
                     name: formState.values['puzzle-name'],
                     creator: userState.id,
                     date: offsetDate.toISOString().split('T')[0],
                     given_digits: cells,
+                    solution_digits: solution,
                     cell_colors: '_________________________________________________________________________________',
                     completed: true,
                     rule_set: formState.values['puzzle-rules'],
@@ -86,6 +82,56 @@ export function* createPuzzle(){
                     average_solve_time: '0:0:0',
                     average_rating: 11
                 });
+            yield put(push("/user/" + userState.username));
+            } catch (e) {
+            (e.response ?
+                yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: e.response.data.message["non_field_errors"][0]}})
+            :
+                yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: e.message}}));
+        }
+        }
+};
+
+export function* watchSavePuzzleRequest() {
+    yield takeEvery(buildPuzzleTypes.SAVE_PUZZLE_REQUEST, savePuzzle);
+};
+
+export function* savePuzzle(){
+
+    const buildPuzzleState = yield select(getBuildPuzzleState);
+    const userState = yield select(getUserState);
+    const formState = yield select(getFormState);
+
+    const cells = buildPuzzleState.cells;
+
+    const date = new Date();
+
+    const offset = date.getTimezoneOffset()
+    const offsetDate = new Date(date.getTime() - (offset*60*1000))
+
+    const cellsByRows = orderByRows(cells);
+
+    if (!formState.values['puzzle-name']) {
+        yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "A puzzle name is required"}});
+    }
+
+    else {
+        try {
+            const createResponse = yield call(apiAxios.post, api.createPuzzle(),
+                {
+                    name: formState.values['puzzle-name'],
+                    creator: userState.id,
+                    date: offsetDate.toISOString().split('T')[0],
+                    given_digits: cells,
+                    solution_digits: '_________________________________________________________________________________',
+                    cell_colors: '_________________________________________________________________________________',
+                    completed: false,
+                    rule_set: formState.values['puzzle-rules'] ? formState.values['puzzle-rules'] : "No rules given",
+                    diagonals: 0,
+                    average_solve_time: '0:0:0',
+                    average_rating: 11
+                });
+            yield put(push("/user/" + userState.username));
             } catch (e) {
             yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: e.response.data.message["non_field_errors"][0]}})
         }
@@ -95,5 +141,6 @@ export function* createPuzzle(){
 export default () => [
     watchChangeValue(),
     watchDeleteValue(),
-    watchCreatePuzzleRequest()
+    watchCreatePuzzleRequest(),
+    watchSavePuzzleRequest()
 ];
