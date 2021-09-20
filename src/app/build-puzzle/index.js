@@ -4,6 +4,8 @@ import "../utils/utils";
 
 export const types = {
     INITIALIZE_BUILD_PUZZLE: "build-puzzle/INITIALIZE_BUILD_PUZZLE",
+    LOAD_SAVED_PUZZLE: "build-puzzle/LOAD_SAVED_PUZZLE",
+    RESET_LOADED_PUZZLE: "build-puzzle/RESET_LOADED_PUZZLE",
     CELL_CLICK: "build-puzzle/CELL_CLICK",
     CONTROL_CELL_CLICK: "build-puzzle/CONTROL_CELL_CLICK",
     CELL_DRAG: "build-puzzle/CELL_DRAG",
@@ -33,10 +35,38 @@ export const initialState = {
     addingCells: true,
     conflictCells: [],
     errorMessage: "",
+    loadedPuzzle: {}
 };
 
 export default (state = initialState, action) => {
     switch (action.type) {
+        case types.INITIALIZE_BUILD_PUZZLE:
+            if (state.loadedPuzzle.given_digits) {
+                return {
+                    ...state,
+                    cells: state.loadedPuzzle.given_digits,
+                    selectedCell: {
+                        box: 10,
+                        cell: 10,
+                        row: 10,
+                        col: 10
+                    },
+                    selectedCells: [],
+                    conflictCells: []
+                }
+            }
+            else {
+                return {...state,
+                    selectedCell: {
+                        box: 10,
+                        cell: 10,
+                        row: 10,
+                        col: 10
+                    },
+                    selectedCells: [],
+                    conflictCells: []}
+            }
+
         case types.CELL_CLICK: {
             const {box, cell, row, col} = action;
             return {
@@ -241,6 +271,16 @@ export default (state = initialState, action) => {
                 ...state,
                 errorMessage: ""
             }
+        case types.LOAD_SAVED_PUZZLE:
+            return {
+                ...state,
+                loadedPuzzle: action.selectedPuzzle
+            }
+        case types.RESET_LOADED_PUZZLE:
+            return {
+                ...state,
+                loadedPuzzle: {}
+            }
         default:
             return state;
     }
@@ -285,6 +325,9 @@ export const actions = {
     },
     savePuzzle: () => {
         return {type: types.SAVE_PUZZLE_REQUEST}
+    },
+    resetLoadedPuzzle: () => {
+        return {type: types.RESET_LOADED_PUZZLE}
     }
 }
 

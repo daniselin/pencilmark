@@ -1,10 +1,18 @@
 import {types as buildPuzzleTypes} from ".."
+import {types as formTypes} from "../../form"
 import {call, put, select, takeEvery} from "redux-saga/effects";
 import apiAxios from "../../../config/axios";
 import api from "../../../config/api";
-import solve from '@mattflow/sudoku-solver';
+import {solveClassicSudoku} from '@cedwards036/sudoku-solver';
 import "../../utils/utils";
-import {orderByCols, orderByRows} from "../../utils/utils";
+import {
+    atLeast17Givens,
+    orderByCols,
+    orderByRows,
+    stringsToIntegers,
+    underscoresToZeroes,
+    zeroesToUnderscores
+} from "../../utils/utils";
 import {push} from "react-router-redux";
 
 const getBuildPuzzleState = (state) => state.buildPuzzle;
@@ -46,49 +54,82 @@ export function* createPuzzle(){
 
     const cells = buildPuzzleState.cells;
 
-    const date = new Date();
+    if (!atLeast17Givens(cells)) {
+        yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "At least 17 digits must be given."}});
+    } else {
+        const loadedPuzzle = buildPuzzleState.loadedPuzzle;
 
-    const offset = date.getTimezoneOffset()
-    const offsetDate = new Date(date.getTime() - (offset*60*1000))
+        const date = new Date();
 
-    const cellsByRows = orderByRows(cells);
+        const offset = date.getTimezoneOffset()
+        const offsetDate = new Date(date.getTime() - (offset * 60 * 1000))
 
-    if (!formState.values['puzzle-name']) {
-        yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "A puzzle name is required"}});
-    }
+        const cellsByRows = underscoresToZeroes(orderByRows(cells));
+        const cellsByRowsArray = stringsToIntegers(cellsByRows.split(""));
+        let cellsByRowsFullArray = [];
 
-    else if (!formState.values['puzzle-rules']) {
-        yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "A rule set is required"}});
-    }
-
-    else if (buildPuzzleState.conflictCells.length !== 0) {
-        yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "Conflicts exist with given digits."}});
-    }
-
-    else {
-        try {
-            const solution = orderByCols(solve(cellsByRows, {emptyValue: "_", maxIterations: 1000000}));
-            const createResponse = yield call(apiAxios.post, api.createPuzzle(),
-                {
-                    name: formState.values['puzzle-name'],
-                    creator: userState.id,
-                    date: offsetDate.toISOString().split('T')[0],
-                    given_digits: cells,
-                    solution_digits: solution,
-                    cell_colors: '_________________________________________________________________________________',
-                    completed: true,
-                    rule_set: formState.values['puzzle-rules'],
-                    diagonals: 0,
-                    average_solve_time: '0:0:0',
-                    average_rating: 11
-                });
-            yield put(push("/user/" + userState.username));
-            } catch (e) {
-            (e.response ?
-                yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: e.response.data.message["non_field_errors"][0]}})
-            :
-                yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: e.message}}));
+        for (let i = 0, j = cellsByRowsArray.length; i < j; i += 9) {
+            let slice = cellsByRowsArray.slice(i, i + 9);
+            cellsByRowsFullArray.push(slice);
         }
+        if (!formState.values['puzzleName']) {
+            yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "A puzzle name is required"}});
+        } else if (!formState.values['puzzleRules']) {
+            yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "A rule set is required"}});
+        } else if (buildPuzzleState.conflictCells.length !== 0) {
+            yield put({
+                type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE,
+                error: {message: "Conflicts exist with given digits."}
+            });
+        } else {
+            try {
+                let solution = solveClassicSudoku(cellsByRowsFullArray);
+                let solutionString = '';
+
+                console.log(solution);
+
+                if (solution.length !== 1) {
+                    yield put({
+                        type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE,
+                        error: {message: "No unique solution found"}
+                    });
+
+                } else {
+                    for (let row in solution[0]) {
+                        console.log(row);
+                        solutionString += solution[0][row].join('');
+                    }
+
+                    const fullSolution = zeroesToUnderscores(orderByCols(solutionString));
+                    const createResponse = yield call(apiAxios.post, api.createPuzzle(),
+                        {
+                            name: formState.values['puzzleName'],
+                            creator: userState.id,
+                            date: offsetDate.toISOString().split('T')[0],
+                            given_digits: cells,
+                            solution_digits: fullSolution,
+                            cell_colors: '_________________________________________________________________________________',
+                            completed: true,
+                            rule_set: formState.values['puzzleRules'],
+                            diagonals: 0,
+                            average_solve_time: '0:0:0',
+                            average_rating: 11,
+                            loaded_puzzle: loadedPuzzle.id
+                        });
+                    yield put(push("/user/" + userState.username));
+                }
+            }
+            catch (e) {
+                    (e.response ?
+                        yield put({
+                            type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE,
+                            error: {message: e.response.data.message["non_field_errors"][0]}
+                        })
+                        :
+                        yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: e.message}}));
+                    console.log(e);
+                }
+            }
         }
 };
 
@@ -103,15 +144,14 @@ export function* savePuzzle(){
     const formState = yield select(getFormState);
 
     const cells = buildPuzzleState.cells;
+    const loadedPuzzle = buildPuzzleState.loadedPuzzle;
 
     const date = new Date();
 
     const offset = date.getTimezoneOffset()
     const offsetDate = new Date(date.getTime() - (offset*60*1000))
 
-    const cellsByRows = orderByRows(cells);
-
-    if (!formState.values['puzzle-name']) {
+    if (!formState.values['puzzleName']) {
         yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "A puzzle name is required"}});
     }
 
@@ -119,17 +159,18 @@ export function* savePuzzle(){
         try {
             const createResponse = yield call(apiAxios.post, api.createPuzzle(),
                 {
-                    name: formState.values['puzzle-name'],
+                    name: formState.values['puzzleName'],
                     creator: userState.id,
                     date: offsetDate.toISOString().split('T')[0],
                     given_digits: cells,
                     solution_digits: '_________________________________________________________________________________',
                     cell_colors: '_________________________________________________________________________________',
                     completed: false,
-                    rule_set: formState.values['puzzle-rules'] ? formState.values['puzzle-rules'] : "No rules given",
+                    rule_set: formState.values['puzzleRules'] ? formState.values['puzzleRules'] : "No rules given",
                     diagonals: 0,
                     average_solve_time: '0:0:0',
-                    average_rating: 11
+                    average_rating: 11,
+                    loaded_puzzle: loadedPuzzle.id
                 });
             yield put(push("/user/" + userState.username));
             } catch (e) {
@@ -138,9 +179,24 @@ export function* savePuzzle(){
         }
 };
 
+export function* watchInitializeBuildPuzzle() {
+    yield takeEvery(buildPuzzleTypes.INITIALIZE_BUILD_PUZZLE, initializeBuildPuzzle);
+};
+
+export function* initializeBuildPuzzle(){
+    const buildPuzzleState = yield select(getBuildPuzzleState);
+    const loadedPuzzle = buildPuzzleState.loadedPuzzle;
+    yield put({type: formTypes.UPDATE_VALUE, name: "puzzleName", value: loadedPuzzle.name})
+    yield put({type: formTypes.UPDATE_VALUE, name: "puzzleRules", value: loadedPuzzle.rule_set})
+    yield call(validateCellValueChange);
+};
+
+
+
 export default () => [
     watchChangeValue(),
     watchDeleteValue(),
     watchCreatePuzzleRequest(),
-    watchSavePuzzleRequest()
+    watchSavePuzzleRequest(),
+    watchInitializeBuildPuzzle()
 ];

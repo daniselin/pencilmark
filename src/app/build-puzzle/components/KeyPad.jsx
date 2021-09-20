@@ -9,7 +9,8 @@ import {pick} from "lodash";
 
 const mapStateToProps = (state) => {
     return {
-        ...pick(state.windowSize, ["height", "width"])
+        ...pick(state.windowSize, ["height", "width"]),
+        ...pick(state.form.values, ["puzzleRules"])
     };
 };
 
@@ -29,6 +30,7 @@ const KeyPad = (props) => {
         selectedCells,
         height,
         width,
+        puzzleRules,
         actions
     } = props;
 
@@ -46,7 +48,8 @@ const KeyPad = (props) => {
     return(
         <div className='container-fluid justify-content-center' style={keyPadStyle}>
             <div className='row' style={{height: '16%'}}>
-                    <TextField required={true} id='puzzle-rules' label="Puzzle Rules: " placeholder="Write rules here..."/>
+                    <TextField required={true} id='puzzleRules' label="Puzzle Rules: " placeholder="Write rules here..."
+                               defaultValue={puzzleRules}/>
             </div>
             <div className='row' style={{height: '10%'}}>
                 <div className='col-2 g-0'>

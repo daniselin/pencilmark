@@ -33,14 +33,11 @@ const ProfileMainContent = (props) => {
 
     const onClick = useCallback((event) => {
         setSection(event.target.id);
-        console.log(section);
     });
-
-    console.log(profile.id, id)
 
     return(
             <>
-                <nav className='navbar navbar-expand-lg'>
+                <nav className='navbar navbar-expand-lg navbar-expand-sm'>
                     <ul className="nav navbar-nav">
                         {profile.id === id &&
                         <li className='nav-item m-2'>

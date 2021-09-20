@@ -8,6 +8,7 @@ import Footer from "./Footer";
 import Login from "../user/components/Login";
 import {bindActionCreators} from "redux";
 import {actions as userActions} from "../user";
+import {actions as buildActions} from "../build-puzzle";
 import PuzzleBuilder from "../build-puzzle/components/PuzzleBuilder";
 import Profile from "../profile/components/Profile";
 
@@ -30,7 +31,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         actions: bindActionCreators({
             logOut: userActions.logoutUser,
-            initializeAuthentication: userActions.initializeAuthentication
+            initializeAuthentication: userActions.initializeAuthentication,
+            initializeBuildPuzzle: buildActions.resetLoadedPuzzle
         }, dispatch)
     };
 };
@@ -45,7 +47,8 @@ const MainContainer = (props) => {
 
     const {
         logOut,
-        initializeAuthentication
+        initializeAuthentication,
+        resetLoadedPuzzle
     } = actions;
 
     const logoutUser = useCallback(() => {
@@ -67,8 +70,9 @@ const MainContainer = (props) => {
                 <Header userName={user["username"]}>
                     {user["hasAuthenticated"] ?
                         <>
-                            <NavigationLink title={user["username"]} link={"/user/" + user["username"]} active={section === "rofile"}/>
-                            <NavigationLink title="Build Puzzle" link="/puzzle/build" active={section === "build-puzzle"}/>
+                            <NavigationLink title={user["username"]} link={"/user/" + user["username"]} active={section === "profile"}/>
+                            <NavigationLink title="Build Puzzle" link="/puzzle/build" active={section === "build-puzzle"}
+                                            onClick={() => resetLoadedPuzzle}/>
                             <NavigationLink link="/login/" title="Logout" onClick={() => logoutUser()}>Logout</NavigationLink>
                         </>
                         :

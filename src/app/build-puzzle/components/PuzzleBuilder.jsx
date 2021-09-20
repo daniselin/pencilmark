@@ -12,7 +12,8 @@ import ErrorMessage from "../../messages/components/ErrorMessage";
 const mapStateToProps = (state) => {
     return {
         ...pick(state.buildPuzzle, ["cells", "errorMessage"]),
-        ...pick(state.windowSize, ["height", "width"])
+        ...pick(state.windowSize, ["height", "width"]),
+        ...pick(state.form.values, ["puzzleName"])
     };
 };
 
@@ -29,7 +30,8 @@ const PuzzleBuilder = (props) => {
         height,
         errorMessage,
         width,
-        actions
+        actions,
+        puzzleName
     } = props;
 
     const {
@@ -44,8 +46,8 @@ const PuzzleBuilder = (props) => {
                     <br/>
                     <div className='row justify-content-center'>
                         <div className='col-4'>
-                            <TextField maxLength={180} autoFocus={true} placeholder={"Puzzle Name"} id={"puzzle-name"}
-                                       required={true}
+                            <TextField maxLength={180} autoFocus={true} placeholder={"Puzzle Name"} id={"puzzleName"}
+                                       required={true} defaultValue={puzzleName}
                             />
                         </div>
                     </div>

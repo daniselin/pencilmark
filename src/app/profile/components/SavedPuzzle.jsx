@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {connect} from "react-redux";
 import {formatDate} from "../../utils/utils";
 import SmallGrid from "../../SmallGrid";
+import '../../utils/selectable.css'
 
 
 const mapStateToProps = (state) => {
@@ -14,11 +15,19 @@ const mapDispatchToProps = (dispatch) => {
 
 const SavedPuzzle = (props) => {
     const {
-        puzzle
+        puzzle,
     } = props;
 
+    const onClick = useCallback ((e) => {
+        const {onClick, } = props;
+
+        if (onClick) {
+            onClick(e);
+        }
+    }, [props]);
+
     return(
-        <div className='card mb-2'>
+        <div className='card mb-2 selectable' onClick={(e) => onClick(e)}>
             <div className='card-header'>
                 {puzzle["name"]}
             </div>

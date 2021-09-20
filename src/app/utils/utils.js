@@ -103,3 +103,47 @@ export const orderByCols = cells => {
 
     return cellsByCols;
 }
+
+export function underscoresToZeroes (puzzleString) {
+    let returnString = '';
+    for (let i = 0; i < puzzleString.length; i++) {
+        if (puzzleString.charAt(i) === "_") {
+            returnString += "0"
+        } else {
+            returnString += puzzleString.charAt(i)
+        }
+    }
+
+    return returnString;
+}
+
+export function zeroesToUnderscores (puzzleString) {
+    let returnString = '';
+    for (let i = 0; i < puzzleString.length; i++) {
+        if (puzzleString.charAt(i) === "0") {
+            returnString += "_"
+        } else {
+            returnString += puzzleString.charAt(i)
+        }
+    }
+
+    return returnString;
+}
+
+export function stringsToIntegers (puzzleArray) {
+    for (let i = 0; i < puzzleArray.length; i++) {
+        puzzleArray[i] = parseInt(puzzleArray[i])
+    }
+    return puzzleArray;
+}
+
+export function atLeast17Givens (puzzleString) {
+    let givens = 0;
+    for (let i = 0; i < puzzleString.length; i++) {
+        if (puzzleString.charAt(i) !== "_") {
+            givens ++;
+        }
+    }
+
+    return givens >= 17;
+}
