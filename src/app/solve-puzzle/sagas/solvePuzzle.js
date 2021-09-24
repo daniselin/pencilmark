@@ -11,6 +11,7 @@ import {types as timerTypes} from "../../timer";
 
 const getSolvePuzzleState = (state) => state.solvePuzzle;
 const getUserState = (state) => state.user;
+const getTimerState = (state) => state.timer;
 const getFormState = (state) => state.form;
 
 export function* watchChangeValue() {
@@ -64,9 +65,37 @@ export function* viewPuzzle(){
     yield put({type: modalTypes.DESTROY_MODAL, id: "solve-puzzle"});
 };
 
+export function* watchCompletePuzzleRequest() {
+    yield takeEvery(solvePuzzleTypes.COMPLETE_PUZZLE_REQUEST, completePuzzle);
+};
+
+export function* completePuzzle(){
+    const solvePuzzleState = yield select(getSolvePuzzleState);
+    const userState = yield select(getUserState);
+    const timerState = yield select(getTimerState);
+    const loadedPuzzle = solvePuzzleState.loadedPuzzle;
+    const date = new Date();
+
+    const offset = date.getTimezoneOffset();
+    const offsetDate = new Date(date.getTime() - (offset*60*1000));
+    try{
+        yield call(apiAxios.post, api.completePuzzle(hashids.decode(loadedPuzzle.id)), {
+            user: userState.id,
+            time: timerState.time,
+            score: 5,
+            rating: solvePuzzleState.rating,
+            date: offsetDate.toISOString().split('T')[0],
+            shared: false
+        });
+    } catch (e) {
+        console.log(e);
+    }
+};
+
 export default () => [
     watchInitializeSolvePuzzle(),
     watchChangeValue(),
     watchDeleteValue(),
     watchViewPuzzle(),
+    watchCompletePuzzleRequest()
 ];

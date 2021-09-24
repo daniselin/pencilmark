@@ -9,6 +9,7 @@ const api = {
     createPuzzle: () => API_URL + "/puzzle/create/",
     checkPuzzle: () => API_URL + "/puzzle/check/",
     getPuzzle: (id) => API_URL + "/puzzle/" + id + "/",
+    completePuzzle: (id) => API_URL + "/puzzle/solved/" + id + "/",
 
     obtainToken: () => API_URL + "/token/obtain/",
     refreshToken: () => API_URL + "/token/refresh/",

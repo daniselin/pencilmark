@@ -39,7 +39,8 @@ const mapDispatchToProps = (dispatch) => {
             closeModal: modalActions.destroyModal,
             rebuildPuzzle: buildActions.rebuildPuzzle,
             startNewPuzzle: buildActions.startNewPuzzle,
-            viewPuzzle: solveActions.viewPuzzle
+            viewPuzzle: solveActions.viewPuzzle,
+            completePuzzle: solveActions.completePuzzle
         }, dispatch)
     };
 };
@@ -60,7 +61,8 @@ const MainContainer = (props) => {
         createModal,
         rebuildPuzzle,
         startNewPuzzle,
-        viewPuzzle
+        viewPuzzle,
+        completePuzzle
     } = actions;
 
     const logoutUser = useCallback(() => {
@@ -96,20 +98,21 @@ const MainContainer = (props) => {
             <>
                 {title}
                 {section === "profile" &&
-                <Profile secondarySection={secondarySection}/>
+                    <Profile secondarySection={secondarySection}/>
                 }
                 {section === "build-puzzle" &&
-                <PuzzleBuilder
+                    <PuzzleBuilder
                     onCreateModal={createModal}
                     onRebuildPuzzle={rebuildPuzzle}
                     onStartNewPuzzle={startNewPuzzle}
-                />
+                    />
                 }
                 {section === "solve-puzzle" &&
-                <PuzzleSolver
+                    <PuzzleSolver
                     onCreateModal={createModal}
                     onViewPuzzle={viewPuzzle}
-                />
+                    onCompletePuzzle={completePuzzle}
+                    />
                 }
                 {section === "login" &&
                 <Login />

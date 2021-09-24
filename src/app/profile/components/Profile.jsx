@@ -2,6 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import {pick} from "lodash/object";
 import ProfileMainContent from "./ProfileMainContent";
+import NotAuthenticated from "../../NotAuthenticated";
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -10,7 +11,8 @@ const mapStateToProps = (state, ownProps) => {
             "profile",
             "createdPuzzles",
             "savedPuzzles"
-        ])
+        ]),
+        ...pick(state.user, ["hasAuthenticated"])
     };
 };
 
@@ -23,11 +25,13 @@ const Profile = (props) => {
         profile,
         savedPuzzles,
         createdPuzzles,
+        hasAuthenticated,
         actions
     } = props;
 
     return(
         <div className='container-fluid'>
+            {hasAuthenticated ?
             <div className='row justify-content-center p-3'>
                 <div className='col-2 border rounded-3'>
                     <h1 className='text-break'>{profile.username}</h1>
@@ -40,7 +44,9 @@ const Profile = (props) => {
                         savedPuzzles={savedPuzzles}
                         createdPuzzles={createdPuzzles}/>
                 </div>
-            </div>
+            </div> :
+            <NotAuthenticated/>
+            }
         </div>
     );
 };

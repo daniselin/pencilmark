@@ -19,8 +19,7 @@ export const types = {
     UPDATE_CONFLICT_CELLS: "solve-puzzle/UPDATE_CONFLICT_CELLS",
     VIEW_PUZZLE: "solve-puzzle/VIEW_PUZZLE",
     SET_RATING: "solve-puzzle/SET_RATING",
-    SUBMIT_RATING_REQUEST: "solve-puzzle/SUBMIT_RATING_REQUEST",
-
+    COMPLETE_PUZZLE_REQUEST: "solve-puzzle/COMPLETE_PUZZLE_REQUEST",
 };
 
 export const initialState = {
@@ -261,7 +260,7 @@ export default (state = initialState, action) => {
             }
         case types.SET_RATING:
             return {...state,
-                rating: action.newRating
+                rating: (action.newRating * 2)
             }
         default:
             return state
@@ -307,6 +306,9 @@ export const actions = {
     },
     submitRating: () => {
         return {type: types.SUBMIT_RATING_REQUEST}
+    },
+    completePuzzle: () => {
+        return {type: types.COMPLETE_PUZZLE_REQUEST}
     }
 }
 

@@ -36,7 +36,6 @@ const RatePuzzle = (props) => {
         <div className="justify-content-center">
             <p>Rate this puzzle?</p>
             <ReactStars onChange={(newRating) => {setRating(newRating)}} isHalf={true} size={30}/>
-            <SubmitButton label="Submit" color="primary" onClick={submitRating}/>
         </div>
     );
 };

@@ -8,13 +8,15 @@ import {bindActionCreators} from "redux";
 import {actions as buildPuzzleActions} from "../index";
 import ErrorMessage from "../../messages/components/ErrorMessage";
 import Modal from "../../modal/components/Modal";
+import NotAuthenticated from "../../NotAuthenticated";
 
 
 const mapStateToProps = (state) => {
     return {
         ...pick(state.buildPuzzle, ["cells", "errorMessage", "loadedPuzzle", "shouldLoadPuzzle"]),
         ...pick(state.windowSize, ["height", "width"]),
-        ...pick(state.form.values, ["puzzleName"])
+        ...pick(state.form.values, ["puzzleName"]),
+        ...pick(state.user, ["hasAuthenticated"])
     };
 };
 
@@ -34,6 +36,7 @@ const PuzzleBuilder = (props) => {
         actions,
         puzzleName,
         loadedPuzzle,
+        hasAuthenticated,
         shouldLoadPuzzle,
         onCreateModal,
         onRebuildPuzzle,
@@ -60,18 +63,19 @@ const PuzzleBuilder = (props) => {
 
     return(
         <div className='container'>
-            <Modal
-                id="build-puzzle"
-                onSubmit={rebuildPuzzle}
-                onManualDestroy={startNewPuzzle}
-                submitLabel={"Resume Building"}
-                cancelLabel={"Start Over"}
-                cancelColor={"danger"}
-                submitColor={"primary"}
-                header="Continue building?">
-                <p>You started building a puzzle previously. Would you like to continue building that puzzle or start over?</p>
-            </Modal>
+            {hasAuthenticated ?
             <>
+                <Modal
+                    id="build-puzzle"
+                    onSubmit={rebuildPuzzle}
+                    onManualDestroy={startNewPuzzle}
+                    submitLabel={"Resume Building"}
+                    cancelLabel={"Start Over"}
+                    cancelColor={"danger"}
+                    submitColor={"primary"}
+                    header="Continue building?">
+                    <p>You started building a puzzle previously. Would you like to continue building that puzzle or start over?</p>
+                </Modal>
                 <br/>
                 <div className='row justify-content-center'>
                     <div className='col-4'>
@@ -100,6 +104,8 @@ const PuzzleBuilder = (props) => {
                     </div>
                 </div>
             </>
+                :
+            <NotAuthenticated/>}
         </div>
     );
 };
