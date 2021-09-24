@@ -17,7 +17,6 @@ export function* watchInitializeUser() {
 };
 
 export function* initializeUser(){
-    yield put({type: formTypes.RESET_FORM});
     yield put({type: messageTypes.RESET_MESSAGES});
     if (localStorage.getItem("refresh")) {
         try {

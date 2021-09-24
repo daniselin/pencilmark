@@ -9,8 +9,11 @@ import Login from "../user/components/Login";
 import {bindActionCreators} from "redux";
 import {actions as userActions} from "../user";
 import {actions as buildActions} from "../build-puzzle";
+import {actions as solveActions} from "../solve-puzzle";
+import {actions as modalActions} from "../modal";
 import PuzzleBuilder from "../build-puzzle/components/PuzzleBuilder";
 import Profile from "../profile/components/Profile";
+import PuzzleSolver from "../solve-puzzle/components/PuzzleSolver";
 
 const mapStateToProps = (state) => {
     return {
@@ -32,10 +35,15 @@ const mapDispatchToProps = (dispatch) => {
         actions: bindActionCreators({
             logOut: userActions.logoutUser,
             initializeAuthentication: userActions.initializeAuthentication,
-            initializeBuildPuzzle: buildActions.resetLoadedPuzzle
+            createModal: modalActions.createModal,
+            closeModal: modalActions.destroyModal,
+            rebuildPuzzle: buildActions.rebuildPuzzle,
+            startNewPuzzle: buildActions.startNewPuzzle,
+            viewPuzzle: solveActions.viewPuzzle
         }, dispatch)
     };
 };
+
 const MainContainer = (props) => {
     const {
         section,
@@ -48,7 +56,11 @@ const MainContainer = (props) => {
     const {
         logOut,
         initializeAuthentication,
-        resetLoadedPuzzle
+        resetLoadedPuzzle,
+        createModal,
+        rebuildPuzzle,
+        startNewPuzzle,
+        viewPuzzle
     } = actions;
 
     const logoutUser = useCallback(() => {
@@ -67,13 +79,12 @@ const MainContainer = (props) => {
 
     return (
         <>
-                <Header userName={user["username"]}>
+                <Header userName={user["username"]} onCreateModal={createModal}>
                     {user["hasAuthenticated"] ?
                         <>
                             <NavigationLink title={user["username"]} link={"/user/" + user["username"]} active={section === "profile"}/>
-                            <NavigationLink title="Build Puzzle" link="/puzzle/build" active={section === "build-puzzle"}
-                                            onClick={() => resetLoadedPuzzle}/>
-                            <NavigationLink link="/login/" title="Logout" onClick={() => logoutUser()}>Logout</NavigationLink>
+                            <NavigationLink title="Build Puzzle" link="/puzzle/build" active={section === "build-puzzle"}/>
+                            <NavigationLink link="/login/" title="Logout" onClick={() => logoutUser()}/>
                         </>
                         :
                         <>
@@ -88,7 +99,17 @@ const MainContainer = (props) => {
                 <Profile secondarySection={secondarySection}/>
                 }
                 {section === "build-puzzle" &&
-                <PuzzleBuilder />
+                <PuzzleBuilder
+                    onCreateModal={createModal}
+                    onRebuildPuzzle={rebuildPuzzle}
+                    onStartNewPuzzle={startNewPuzzle}
+                />
+                }
+                {section === "solve-puzzle" &&
+                <PuzzleSolver
+                    onCreateModal={createModal}
+                    onViewPuzzle={viewPuzzle}
+                />
                 }
                 {section === "login" &&
                 <Login />
@@ -101,7 +122,7 @@ const MainContainer = (props) => {
 };
 
 MainContainer.propTypes = {
-    section: PropTypes.oneOf(["notFound","profile", "build-puzzle", "login"]).isRequired,
+    section: PropTypes.oneOf(["notFound","profile", "build-puzzle", "login", "solve-puzzle"]).isRequired,
     secondarySection: PropTypes.string,
     title: PropTypes.oneOfType([
         PropTypes.string,

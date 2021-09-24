@@ -10,6 +10,7 @@ import Label from "./Label";
 
 const mapStateToProps = (state) => {
     return {...pick(state.form, [
+        "values",
         "fieldErrors"
     ])};
 };
@@ -36,7 +37,8 @@ const TextField = (props) => {
         placeholder,
         fieldErrors,
         autoFocus,
-        type
+        type,
+        values,
     } = props;
 
     const {update} = actions;
@@ -55,20 +57,32 @@ const TextField = (props) => {
         }
     }, [props, update]
     );
+
+    const onFocus = useCallback((event) => {
+        const {onFocus} = props;
+        if (onFocus) {
+            onFocus(event);
+        }
+    }, [props]
+    );
     
     return (
         <FormGroup id={id} fieldErrors={fieldErrors}>
             <Label id={id} label={label} required={required}/>
             {type !== "textarea" ?
                 <input autoFocus={autoFocus}
-                       id={id} name={name || id}
+                       id={id}
+                       name={name || id}
                        type={type}
                        className={"form-control " + className}
                        placeholder={placeholder}
                        defaultValue={defaultValue}
                        onChange={onChange}
                        disabled={disabled}
-                       maxLength={maxLength}/>
+                       maxLength={maxLength}
+                       onFocus={onFocus}
+                       // value={values[id]}
+                />
                 :
                 <textarea autoFocus={autoFocus}
                           id={id} name={name || id}
@@ -79,7 +93,10 @@ const TextField = (props) => {
                           defaultValue={defaultValue}
                           onChange={onChange}
                           disabled={disabled}
-                          maxLength={maxLength}/>
+                          maxLength={maxLength}
+                          onFocus={onFocus}
+                          value={values[id]}
+                />
             }
         </FormGroup>
     );

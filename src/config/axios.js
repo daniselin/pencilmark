@@ -24,7 +24,6 @@ apiAxios.interceptors.response.use(undefined,  async function (error) {
     if ((error.response.status === 401 || error.response.code === "token_not_valid") && !originalRequest._retry) {
         originalRequest._retry = true;
         const response = await apiAxios.post(api.refreshToken(), {refresh: localStorage.getItem('refresh')});
-        console.log(response);
         localStorage.setItem("access", response.data["access"]);
         localStorage.setItem("refresh", response.data["refresh"]);
 

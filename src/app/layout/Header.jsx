@@ -6,6 +6,7 @@ const Header = (props) => {
     const {
         children,
         username,
+        onCreateModal
     } = props;
 
 

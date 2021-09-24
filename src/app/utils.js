@@ -57,8 +57,8 @@ export const orderByCols = cells => {
     let cellsByCols = '_________________________________________________________________________________';
 
     for (let i = 0; i < cells.length; i++) {
-        let decrease = (Math.floor(i / 9) === Math.floor(i / 10));
-        if (!decrease) {
+        let increase = (Math.floor(i / 9) === Math.floor(i / 10));
+        if (increase) {
             if (i % 10 === 0) {
                 cellsByCols = cellsByCols.substring(0, i) + cells.charAt(i) + cellsByCols.substring(i + 1);
             } else if (i % 10 === 1) {
@@ -146,4 +146,28 @@ export function atLeast17Givens (puzzleString) {
     }
 
     return givens >= 17;
+}
+
+export function index (col, row) {
+    return ((col - 1) * 9 + row - 1);
+}
+
+export const colorMap = {
+    1: "#ffffff90",
+    2: "#ffffff65",
+    3: "#ffffff40",
+    4: "#66ff6680",
+    5: "#ff00ff80",
+    6: "#DC143C80",
+    7: "#ff995590",
+    8: "#ffff0090",
+    9: "#4db8ff",
+    0: "#ffffff"
+};
+
+export function formatTime (time) {
+    const minutes = Math.floor(time / 60);
+    const seconds = (time % 60).toString().length === 1 ? "0" + (time % 60).toString() : time % 60;
+
+    return minutes.toString() + ":" + seconds;
 }

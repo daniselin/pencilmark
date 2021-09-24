@@ -2,6 +2,8 @@ import React from "react";
 import {connect} from "react-redux";
 import {map} from "lodash";
 import CreatedPuzzle from "./CreatedPuzzle";
+import {bindActionCreators} from "redux";
+import {actions as profileActions} from "../index";
 
 
 const mapStateToProps = (state) => {
@@ -9,23 +11,28 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-    return {};
+    return {actions: bindActionCreators({
+            selectCreatedPuzzle: profileActions.selectCreatedPuzzle,
+        }, dispatch)};
 };
 
 const CreatedPuzzles = (props) => {
     const {
         createdPuzzles,
-        width
+        width,
+        actions
     } = props;
 
-    console.log(width)
+    const {
+        selectCreatedPuzzle
+    } = actions;
 
     return(
         <div className='container-fluid'>
             <div className="row">
                 {map(createdPuzzles, (puzzle, i) =>
                     <div key={puzzle["name"]} className={width < 970 ? "col-6" : "col-4"}>
-                        <CreatedPuzzle puzzle={puzzle}/>
+                        <CreatedPuzzle puzzle={puzzle} onClick={(e) => {selectCreatedPuzzle(i)}}/>
                     </div> )}
             </div>
         </div>

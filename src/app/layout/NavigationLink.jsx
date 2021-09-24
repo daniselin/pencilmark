@@ -6,19 +6,17 @@ const NavigationLink = (props) => {
     const {
         title,
         link,
-        active,
-        onClick
+        active
     } = props;
 
-    const onSelect = useCallback((event) => {
-        if (onClick) {
-            onClick({event: event});
-        };
-    }, [props, onClick]);
+    const onClick = useCallback((e) => {
+        const {onClick} = props;
+        onClick && onClick(e);
+    }, [props]);
 
     return (
         <li role="presentation" className={"nav-item btn btn-dark text-light m-2 " + (active ? "active" : "")}>
-            <Link className="text-light" to={link} onClick={onClick ? (e) => onSelect(e) : () => {} }>{title}</Link>
+            <Link className="text-light" to={link} onClick={onClick}>{title}</Link>
         </li>
     )
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
-import {actions as buildPuzzleActions} from "../index";
+import {actions as solvePuzzleActions} from "../index";
 import TextField from "../../form/components/TextField";
 import KeyPadButton from "./KeyPadButton";
 import {pick} from "lodash";
@@ -10,17 +10,15 @@ import {pick} from "lodash";
 const mapStateToProps = (state) => {
     return {
         ...pick(state.windowSize, ["height", "width"]),
-        ...pick(state.form.values, ["puzzleRules"])
+        ...pick(state.solvePuzzle, ["loadedPuzzle"])
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {actions: bindActionCreators({
-            changeCellValue: buildPuzzleActions.changeCellValue,
-            deleteCellValue: buildPuzzleActions.deleteCellValue,
-            createPuzzle: buildPuzzleActions.createPuzzle,
-            savePuzzle: buildPuzzleActions.savePuzzle,
-            onTextFieldFocus: buildPuzzleActions.onTextFieldFocus
+            changeCellValue: solvePuzzleActions.changeCellValue,
+            deleteCellValue: solvePuzzleActions.deleteCellValue,
+            onTextFieldFocus: solvePuzzleActions.onTextFieldFocus
         }, dispatch)};
 };
 
@@ -31,7 +29,7 @@ const KeyPad = (props) => {
         selectedCells,
         height,
         width,
-        puzzleRules,
+        loadedPuzzle,
         actions
     } = props;
 
@@ -50,8 +48,7 @@ const KeyPad = (props) => {
     return(
         <div className='container-fluid justify-content-center' style={keyPadStyle}>
             <div className='row' style={{height: '16%'}}>
-                    <TextField required={true} id='puzzleRules' label="Puzzle Rules: " placeholder="Write rules here..."
-                               defaultValue={puzzleRules} onFocus={(e) => onTextFieldFocus(e)}/>
+                <div className="h6">{loadedPuzzle.rule_set}</div>
             </div>
             <div className='row' style={{height: '10%'}}>
                 <div className='col-2 g-0'>
@@ -143,20 +140,6 @@ const KeyPad = (props) => {
                 <div className='col-4 g-0'>
                     <KeyPadButton color="purple" value={"Delete"} onClick={(e) => {
                         deleteCellValue();
-                        e.stopPropagation();
-                    }}/>
-                </div>
-            </div>
-            <div className='row'>
-                <div className='col-3 g-0'>
-                    <KeyPadButton color="#401153" value={"Save"} onClick={(e) => {
-                        savePuzzle();
-                        e.stopPropagation();
-                    }}/>
-                </div>
-                <div className='col-3 g-0'>
-                    <KeyPadButton color="#401153" value={"Create"} onClick={(e) => {
-                        createPuzzle();
                         e.stopPropagation();
                     }}/>
                 </div>

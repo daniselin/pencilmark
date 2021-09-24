@@ -22,7 +22,8 @@ const mapDispatchToProps = (dispatch) => {
 const BuildPuzzle = (props) => {
     const {
         actions,
-        loadedPuzzle
+        loadedPuzzle,
+        onCreateModal
     } = props;
 
     const {

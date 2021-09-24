@@ -6,6 +6,7 @@ import React from "react";
 import Authentication from "../app/user/components/Authentication";
 import BuildPuzzle from "../app/build-puzzle/components/BuildPuzzle";
 import UserProfile from "../app/profile/components/UserProfile";
+import SolvePuzzle from "../app/solve-puzzle/components/SolvePuzzle";
 
 export default (
     <ConnectedRouter history={history}>
@@ -16,6 +17,8 @@ export default (
                 <Redirect to={"/login/"}/>
             </Route>
             <Route exact path={"/user/:username"} component={UserProfile}/>
+            <Route exact path={"/puzzle/solve/:id"} component={SolvePuzzle}/>
+            {/*<Route exact path={"/user/search/"} component={UserSearch}/>*/}
             <Route component={NotFound}/>
 
         </Switch>

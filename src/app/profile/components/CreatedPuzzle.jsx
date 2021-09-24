@@ -1,6 +1,6 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {connect} from "react-redux";
-import {formatDate} from "../../utils/utils";
+import {formatDate} from "../../utils";
 import SmallGrid from "../../SmallGrid";
 
 
@@ -17,16 +17,16 @@ const CreatedPuzzle = (props) => {
         puzzle
     } = props;
 
-    // const [width, setWidth] = useState("");
-    //
-    // const createdPuzzleRef = useRef(null);
-    // useEffect(() => {
-    //     setWidth(createdPuzzleRef.current.offsetWidth);
-    //     console.log('created puzzle width', width);
-    // }, [createdPuzzleRef]);
+    const onClick = useCallback ((e) => {
+        const {onClick, } = props;
+
+        if (onClick) {
+            onClick(e);
+        }
+    }, [props]);
 
     return(
-        <div className='card justify-content-center mb-4'>
+        <div className='card justify-content-center mb-4 selectable' onClick={(e) => onClick(e)}>
             <div className='card-header'>
                 {puzzle["name"]}
             </div>

@@ -1,78 +1,65 @@
 import some from "lodash/some";
 import forEach from "lodash/forEach";
 import "../utils";
+import {index} from "../utils";
 
 export const types = {
-    INITIALIZE_BUILD_PUZZLE: "build-puzzle/INITIALIZE_BUILD_PUZZLE",
-    SET_LOADED_PUZZLE: "build-puzzle/SET_LOADED_PUZZLE",
-    LOAD_SAVED_PUZZLE: "build-puzzle/LOAD_SAVED_PUZZLE",
-    RESET_LOADED_PUZZLE: "build-puzzle/RESET_LOADED_PUZZLE",
-    CELL_CLICK: "build-puzzle/CELL_CLICK",
-    CONTROL_CELL_CLICK: "build-puzzle/CONTROL_CELL_CLICK",
-    CELL_DRAG: "build-puzzle/CELL_DRAG",
-    CONTROL_CELL_DRAG: "build-puzzle/CONTROL_CELL_DRAG",
-    INITIALIZE_CONTROL_CELL_DRAG: "build-puzzle/INITIALIZE_CONTROL_CELL_DRAG",
-    INITIALIZE_CELL_DRAG: "build-puzzle/INITIALIZE_CELL_DRAG",
-    CELL_VALUE_CHANGE: "build-puzzle/CELL_VALUE_CHANGE",
-    CELL_VALUE_CHANGE_INITIALIZE: "build-puzzle/CELL_VALUE_CHANGE_INITIALIZE",
-    CELL_VALUE_DELETE: "build-puzzle/CELL_VALUE_DELETE",
-    FOCUS_OFF_CELLS: "build-puzzle/FOCUS_OFF_CELLS",
-    UPDATE_CONFLICT_CELLS: "build-puzzle/UPDATE_CONFLICT_CELLS",
-    CREATE_PUZZLE_REQUEST: "build-puzzle/CREATE_PUZZLE_REQUEST",
-    SAVE_PUZZLE_REQUEST: "build-puzzle/SAVE_PUZZLE_REQUEST",
-    CREATE_PUZZLE_FAILURE: "build-puzzle/CREATE_PUZZLE_FAILURE",
-    REMOVE_ERROR_MESSAGE: "build-puzzle/REMOVE_ERROR_MESSAGE",
-    START_NEW_PUZZLE: "build-puzzle/START_NEW_PUZZLE",
-    SHOULD_LOAD_PUZZLE: "build-puzzle/SHOULD_LOAD_PUZZLE",
-    SHOULD_NOT_LOAD_PUZZLE: "build-puzzle/SHOULD_NOT_LOAD_PUZZLE",
-    REBUILD_PUZZLE: "build-puzzle/REBUILD_PUZZLE"
+    INITIALIZE_SOLVE_PUZZLE: "solve-puzzle/INITIALIZE_SOLVE_PUZZLE",
+    INITIALIZE_SOLVE_PUZZLE_SUCCESS: "solve-puzzle/INITIALIZE_SOLVE_PUZZLE_SUCCESS",
+    CELL_CLICK: "solve-puzzle/CELL_CLICK",
+    CONTROL_CELL_CLICK: "solve-puzzle/CONTROL_CELL_CLICK",
+    CELL_DRAG: "solve-puzzle/CELL_DRAG",
+    CONTROL_CELL_DRAG: "solve-puzzle/CONTROL_CELL_DRAG",
+    INITIALIZE_CONTROL_CELL_DRAG: "solve-puzzle/INITIALIZE_CONTROL_CELL_DRAG",
+    INITIALIZE_CELL_DRAG: "solve-puzzle/INITIALIZE_CELL_DRAG",
+    CELL_VALUE_CHANGE: "solve-puzzle/CELL_VALUE_CHANGE",
+    CELL_VALUE_CHANGE_INITIALIZE: "solve-puzzle/CELL_VALUE_CHANGE_INITIALIZE",
+    CELL_VALUE_DELETE: "solve-puzzle/CELL_VALUE_DELETE",
+    FOCUS_OFF_CELLS: "solve-puzzle/FOCUS_OFF_CELLS",
+    UPDATE_CONFLICT_CELLS: "solve-puzzle/UPDATE_CONFLICT_CELLS",
+    VIEW_PUZZLE: "solve-puzzle/VIEW_PUZZLE",
+    SET_RATING: "solve-puzzle/SET_RATING",
+    SUBMIT_RATING_REQUEST: "solve-puzzle/SUBMIT_RATING_REQUEST",
+
 };
 
 export const initialState = {
-    cells: '_________________________________________________________________________________',
+    currentDigits: '_________________________________________________________________________________',
     selectedCell: {
         box: 10,
         cell: 10,
         row: 10,
         col: 10
     },
+    cornerDigits: {},
+    centerDigits: {},
+    cellColors: '_________________________________________________________________________________',
     selectedCells: [],
     addingCells: true,
     conflictCells: [],
     errorMessage: "",
-    loadedPuzzle: 0,
-    shouldLoadPuzzle: false
+    loadedPuzzle: {
+        given_digits: '_________________________________________________________________________________'
+    },
+    rating: 0
 };
 
 export default (state = initialState, action) => {
     switch (action.type) {
-        case types.SET_LOADED_PUZZLE:
-            if (state.loadedPuzzle.given_digits && state.shouldLoadPuzzle) {
-                return {
-                    ...state,
-                    cells: state.loadedPuzzle.given_digits,
-                    selectedCell: {
-                        box: 10,
-                        cell: 10,
-                        row: 10,
-                        col: 10
-                    },
-                    selectedCells: [],
-                    conflictCells: []
-                }
+        case types.INITIALIZE_SOLVE_PUZZLE_SUCCESS:
+            return {
+                ...state,
+                currentDigits: action.puzzle.puzzle.given_digits,
+                selectedCell: {
+                    box: 10,
+                    cell: 10,
+                    row: 10,
+                    col: 10
+                },
+                selectedCells: [],
+                conflictCells: [],
+                loadedPuzzle: action.puzzle.puzzle
             }
-            else {
-                return {...state,
-                    selectedCell: {
-                        box: 10,
-                        cell: 10,
-                        row: 10,
-                        col: 10
-                    },
-                    selectedCells: [],
-                    conflictCells: []}
-            }
-
         case types.CELL_CLICK: {
             const {box, cell, row, col} = action;
             return {
@@ -110,7 +97,6 @@ export default (state = initialState, action) => {
                         selectedCell: initialState.selectedCell
                     }
                 }
-                ;
             }
             else {
                 return {
@@ -144,7 +130,7 @@ export default (state = initialState, action) => {
                 }
             } else {
                 return {...state}
-            };
+            }
         case types.CONTROL_CELL_DRAG: {
             const drugCell = {
                 box: action.box,
@@ -156,6 +142,7 @@ export default (state = initialState, action) => {
                 const newSelectedCells = state.selectedCells.filter((aCell) => {
                     return (aCell.row !== drugCell.row || aCell.col !== drugCell.col)
                 });
+                console.log(newSelectedCells);
                 return {
                     ...state,
                     selectedCells: newSelectedCells,
@@ -167,7 +154,6 @@ export default (state = initialState, action) => {
                 }
             }
             return {...state};
-            ;
         }
         case types.INITIALIZE_CELL_DRAG:
             return {
@@ -213,43 +199,50 @@ export default (state = initialState, action) => {
         case types.CELL_VALUE_CHANGE: {
             const selectedCell = {...state.selectedCell};
             const selectedCells = [...state.selectedCells];
-            const cells = {...state.cells};
+            const cells = {...state.currentDigits};
+            const loadedPuzzle = {...state.loadedPuzzle}
             const newValue = action.newValue;
             if (selectedCell.row !== 10) {
                 const selectedCellIndex = (selectedCell.col - 1) * 9 + (selectedCell.row - 1);
                 cells[selectedCellIndex] = newValue;
             } else {
                 forEach(selectedCells, (cell) => {
-                    const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
-                    cells[selectedCellIndex] = newValue;
+                    if (loadedPuzzle.given_digits.charAt(index(cell.col, cell.row)) !== cells[index(cell.col, cell.row)] ||
+                        cells[index(cell.col, cell.row)] === "_") {
+
+                        const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
+                        cells[selectedCellIndex] = newValue;
+                    }
                 });
             }
-            ;
 
             return {
                 ...state,
-                cells: Object.values(cells).join('')
+                currentDigits: Object.values(cells).join('')
             }
         }
         case types.CELL_VALUE_DELETE: {
             const selectedCell = {...state.selectedCell};
             const selectedCells = [...state.selectedCells];
-            const cells = {...state.cells};
+            const cells = {...state.currentDigits};
+            const loadedPuzzle = {...state.loadedPuzzle};
 
             if (selectedCell.row !== 10) {
                 const selectedCellIndex = (selectedCell.col - 1) * 9 + (selectedCell.row - 1);
                 cells[selectedCellIndex] = "_";
             } else {
                 forEach(selectedCells, (cell) => {
-                    const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
-                    cells[selectedCellIndex] = "_";
+                    if (loadedPuzzle.given_digits.charAt(index(cell.col, cell.row)) !== cells[index(cell.col, cell.row)] ||
+                        cells[index(cell.col, cell.row)] === "_") {
+                        const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
+                        cells[selectedCellIndex] = "_";
+                    }
                 });
             }
-            ;
 
             return {
                 ...state,
-                cells: Object.values(cells).join('')
+                currentDigits: Object.values(cells).join('')
             }
         }
         case types.FOCUS_OFF_CELLS:
@@ -260,51 +253,25 @@ export default (state = initialState, action) => {
             }
         case types.CELL_VALUE_CHANGE_INITIALIZE:
             return {...state,
-            conflictCells: []
+                conflictCells: []
             }
         case types.UPDATE_CONFLICT_CELLS:
             return {...state,
-            conflictCells: action.conflictCells
+                conflictCells: action.conflictCells
             }
-        case types.CREATE_PUZZLE_FAILURE:
+        case types.SET_RATING:
             return {...state,
-            errorMessage: action.error.message
-            }
-        case types.REMOVE_ERROR_MESSAGE:
-            return {
-                ...state,
-                errorMessage: ""
-            }
-        case types.LOAD_SAVED_PUZZLE:
-            return {
-                ...state,
-                loadedPuzzle: action.selectedPuzzle
-            }
-        case types.RESET_LOADED_PUZZLE:
-            return {
-                ...state,
-                loadedPuzzle: {}
-            }
-        case types.START_NEW_PUZZLE:
-            return {
-                ...initialState
-            }
-        case types.SHOULD_LOAD_PUZZLE:
-            return {
-                ...state,
-                shouldLoadPuzzle: true
-            }
-        case types.SHOULD_NOT_LOAD_PUZZLE:
-            return {
-                ...state,
-                shouldLoadPuzzle: false
+                rating: action.newRating
             }
         default:
-            return state;
+            return state
     }
 };
 
 export const actions = {
+    initializeSolvePuzzle: (id) => {
+        return {type: types.INITIALIZE_SOLVE_PUZZLE, id}
+    },
     clickCell: (box, cell, row, col) => {
         return {type: types.CELL_CLICK, box, cell, row, col};
     },
@@ -332,26 +299,14 @@ export const actions = {
     focusOffCells: () => {
         return {type: types.FOCUS_OFF_CELLS}
     },
-    createPuzzle: () => {
-        return {type: types.CREATE_PUZZLE_REQUEST}
+    viewPuzzle: () => {
+        return {type: types.VIEW_PUZZLE}
     },
-    removeErrorMessage: () => {
-        return {type: types.REMOVE_ERROR_MESSAGE}
+    setRating: (newRating) => {
+        return {type: types.SET_RATING, newRating}
     },
-    initializeBuildPuzzle: () => {
-        return {type: types.INITIALIZE_BUILD_PUZZLE}
-    },
-    savePuzzle: () => {
-        return {type: types.SAVE_PUZZLE_REQUEST}
-    },
-    onTextFieldFocus: () => {
-        return {type: types.FOCUS_OFF_CELLS}
-    },
-    startNewPuzzle: () => {
-        return {type: types.START_NEW_PUZZLE}
-    },
-    rebuildPuzzle: () => {
-        return {type: types.REBUILD_PUZZLE}
+    submitRating: () => {
+        return {type: types.SUBMIT_RATING_REQUEST}
     }
 }
 

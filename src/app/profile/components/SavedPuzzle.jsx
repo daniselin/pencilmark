@@ -1,8 +1,8 @@
 import React, {useCallback} from "react";
 import {connect} from "react-redux";
-import {formatDate} from "../../utils/utils";
+import {formatDate} from "../../utils";
 import SmallGrid from "../../SmallGrid";
-import '../../utils/selectable.css'
+import '../../selectable.css'
 
 
 const mapStateToProps = (state) => {
