@@ -14,11 +14,13 @@ import {actions as modalActions} from "../modal";
 import PuzzleBuilder from "../build-puzzle/components/PuzzleBuilder";
 import Profile from "../profile/components/Profile";
 import PuzzleSolver from "../solve-puzzle/components/PuzzleSolver";
+import Loading from "./Loading";
 
 const mapStateToProps = (state) => {
     return {
         ...pick(state.messages, [
-            "fatalErrorMessage"
+            "fatalErrorMessage",
+            "isLoading"
         ]),
         user: {
             ...pick(state.user, [
@@ -51,6 +53,7 @@ const MainContainer = (props) => {
         secondarySection,
         user,
         title,
+        isLoading,
         actions
     } = props;
 
@@ -80,47 +83,54 @@ const MainContainer = (props) => {
     }, [initialize]);
 
     return (
-        <>
-                <Header userName={user["username"]} onCreateModal={createModal}>
-                    {user["hasAuthenticated"] ?
-                        <>
-                            <NavigationLink title={user["username"]} link={"/user/" + user["username"]} active={section === "profile"}/>
-                            <NavigationLink title="Build Puzzle" link="/puzzle/build" active={section === "build-puzzle"}/>
-                            <NavigationLink link="/login/" title="Logout" onClick={() => logoutUser()}/>
-                        </>
-                        :
-                        <>
-                            <NavigationLink title="Login/Signup" link="/login" active={section === "login"}/>
-                        </>
-                    }
-                </Header>
+            (isLoading) ? <Loading/> :
+                <>
+                    <Header userName={user["username"]} onCreateModal={createModal}>
+                        {user["hasAuthenticated"] ?
+                            <>
+                                <NavigationLink title={user["username"]} link={"/user/" + user["username"]}
+                                                active={section === "profile"}/>
+                                <NavigationLink title="Build Puzzle" link="/puzzle/build"
+                                                active={section === "build-puzzle"}/>
+                                <NavigationLink link="/login/" title="Logout" onClick={() => logoutUser()}/>
+                            </>
+                            :
+                            <>
+                                <NavigationLink title="Login/Signup" link="/login" active={section === "login"}/>
+                            </>
+                        }
+                    </Header>
 
-            <>
-                {title}
-                {section === "profile" &&
-                    <Profile secondarySection={secondarySection}/>
-                }
-                {section === "build-puzzle" &&
-                    <PuzzleBuilder
-                    onCreateModal={createModal}
-                    onRebuildPuzzle={rebuildPuzzle}
-                    onStartNewPuzzle={startNewPuzzle}
-                    />
-                }
-                {section === "solve-puzzle" &&
-                    <PuzzleSolver
-                    onCreateModal={createModal}
-                    onViewPuzzle={viewPuzzle}
-                    onCompletePuzzle={completePuzzle}
-                    />
-                }
-                {section === "login" &&
-                <Login />
-                }
-            </>
+                    <>
+                        {title}
+                        {section === "profile" &&
+                        <Profile secondarySection={secondarySection}/>
+                        }
+                        {section === "build-puzzle" &&
+                        <PuzzleBuilder
+                            onCreateModal={createModal}
+                            onRebuildPuzzle={rebuildPuzzle}
+                            onStartNewPuzzle={startNewPuzzle}
+                        />
+                        }
+                        {section === "solve-puzzle" &&
+                        <>
+                            <PuzzleSolver
+                                onCreateModal={createModal}
+                                onViewPuzzle={viewPuzzle}
+                                onCompletePuzzle={completePuzzle}
+                            />
+                            <br/>
+                            <br/>
+                        </>
+                        }
+                        {section === "login" &&
+                        <Login/>
+                        }
+                    </>
 
-            <Footer/>
-        </>
+                    <Footer/>
+                </>
     );
 };
 

@@ -4,6 +4,8 @@ import "../utils";
 
 export const types = {
     INITIALIZE_BUILD_PUZZLE: "build-puzzle/INITIALIZE_BUILD_PUZZLE",
+    INITIALIZE_BUILD_PUZZLE_SUCCESS: "build-puzzle/INITIALIZE_BUILD_PUZZLE_SUCCESS",
+    SET_IS_LOADING: "build-puzzle/SET_IS_LOADING",
     SET_LOADED_PUZZLE: "build-puzzle/SET_LOADED_PUZZLE",
     LOAD_SAVED_PUZZLE: "build-puzzle/LOAD_SAVED_PUZZLE",
     RESET_LOADED_PUZZLE: "build-puzzle/RESET_LOADED_PUZZLE",
@@ -46,6 +48,21 @@ export const initialState = {
 
 export default (state = initialState, action) => {
     switch (action.type) {
+        case types.INITIALIZE_BUILD_PUZZLE:
+            return {
+                ...state,
+                isLoading: true
+            }
+        case types.INITIALIZE_BUILD_PUZZLE_SUCCESS:
+            return {
+                ...state,
+                isLoading: false
+            }
+        case types.SET_IS_LOADING:
+            return {
+                ...state,
+                isLoading: true
+            }
         case types.SET_LOADED_PUZZLE:
             if (state.loadedPuzzle.given_digits && state.shouldLoadPuzzle) {
                 return {
@@ -72,7 +89,6 @@ export default (state = initialState, action) => {
                     selectedCells: [],
                     conflictCells: []}
             }
-
         case types.CELL_CLICK: {
             const {box, cell, row, col} = action;
             return {

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from "react";
+import React, {useCallback} from "react";
 import {connect} from "react-redux";
 import {pick} from "lodash";
 import {bindActionCreators} from "redux";
@@ -9,6 +9,7 @@ import Timer from "../../timer/components/Timer";
 import {formatTime} from "../../utils";
 import RatePuzzle from "./RatePuzzle";
 import NotAuthenticated from "../../NotAuthenticated";
+import {actions as solvePuzzleActions} from "../index";
 
 
 const mapStateToProps = (state) => {
@@ -22,6 +23,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {actions: bindActionCreators({
+            rotateEnterMode: solvePuzzleActions.rotateEnterMode
         }, dispatch)};
 };
 
@@ -38,6 +40,7 @@ const PuzzleSolver = (props) => {
     } = props;
 
     const {
+        rotateEnterMode
     } = actions;
 
     const viewPuzzle = useCallback((id) => {
@@ -78,10 +81,10 @@ const PuzzleSolver = (props) => {
                     <br/>
                     <div className='row justify-content-around'>
                         <div className={width > 970 ? 'col-6' : 'col-12'}>
-                            <PuzzleGrid mode="solve"/>
+                            <PuzzleGrid/>
                         </div>
                         <div className={width > 970 ? 'col-5' : 'col-12'}>
-                            <KeyPad/>
+                            <KeyPad rotateEnterMode={rotateEnterMode}/>
                         </div>
                     </div>
                 </>

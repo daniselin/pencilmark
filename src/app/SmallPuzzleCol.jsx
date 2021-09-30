@@ -37,7 +37,7 @@ const PuzzleCol = (props) => {
 
 
     return(
-        <div style={boxStyle} className="d-flex flex-column">
+        <div style={boxStyle} className="d-flex flex-column justify-content-center align-items-center">
             <SmallPuzzleCell height={height / 9} col={col} row={1} width={height / 9} value={value.charAt(0)}/>
             <SmallPuzzleCell height={height / 9} col={col} row={2} width={height / 9} value={value.charAt(1)}/>
             <SmallPuzzleCell height={height / 9} col={col} row={3} width={height / 9} value={value.charAt(2)}/>

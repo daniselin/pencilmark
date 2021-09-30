@@ -86,7 +86,6 @@ export function* createPuzzle(){
         } else {
             try {
                 let solution = solveClassicSudoku(cellsByRowsFullArray);
-                console.log(solution);
                 let solutionString = '';
 
                 if (solution.length !== 1) {
@@ -203,6 +202,7 @@ export function* initializeBuildPuzzle(){
     yield put({type: buildPuzzleTypes.SHOULD_NOT_LOAD_PUZZLE});
 
     yield call(validateCellValueChange);
+    yield put({type: buildPuzzleTypes.INITIALIZE_BUILD_PUZZLE_SUCCESS});
 };
 
 export function* watchStartNewPuzzle() {
@@ -210,8 +210,10 @@ export function* watchStartNewPuzzle() {
 };
 
 export function* startNewPuzzle(){
+    yield put({type: buildPuzzleTypes.SET_IS_LOADING})
     yield put({type: formTypes.RESET_FORM});
     window.location.reload();
+    yield put({type: buildPuzzleTypes.INITIALIZE_BUILD_PUZZLE_SUCCESS});
 };
 
 export function* watchRebuildPuzzle() {

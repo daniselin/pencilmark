@@ -5,6 +5,7 @@ import api from "../../../config/api";
 import {types as buildPuzzleTypes} from "../../build-puzzle";
 import {push} from "react-router-redux";
 import hashids from "../../../config/hashids";
+import {types as modalTypes} from "../../modal";
 
 export const getProfileState = state => state.profile;
 
@@ -47,23 +48,37 @@ export function* selectSavedPuzzle(action){
     yield put(push("/puzzle/build"));
 };
 
+export function* watchSolvePuzzle() {
+    yield takeEvery(profileTypes.SOLVE_PUZZLE, solvePuzzle);
+};
+
+export function* solvePuzzle(){
+    const profileState = yield select(getProfileState);
+    const selectedPuzzle = profileState.selectedPuzzle;
+    yield put({type: modalTypes.DESTROY_MODAL, id: "created-puzzle"})
+    yield put(push("/puzzle/solve/" + selectedPuzzle.id + "/"));
+};
+
 export function* watchSelectCreatedPuzzle() {
     yield takeEvery(profileTypes.SELECT_CREATED_PUZZLE, selectCreatedPuzzle);
 };
 
-export function* selectCreatedPuzzle(action){
-    const {
-        key
-    } = action;
+export function* selectCreatedPuzzle(){
+    yield put({type: modalTypes.CREATE_MODAL, id: "created-puzzle"});
+};
 
-    const profileState = yield select(getProfileState);
-    let selectedPuzzle = profileState.createdPuzzles[key];
-    yield put(push("/puzzle/solve/" + selectedPuzzle.id + "/"));
+export function* watchSelectCompletedPuzzle() {
+    yield takeEvery(profileTypes.SELECT_COMPLETED_PUZZLE, selectCompletedPuzzle);
+};
 
+export function* selectCompletedPuzzle(){
+    yield put({type: modalTypes.CREATE_MODAL, id: "completed-puzzle"});
 };
 
 export default () => [
     watchInitializeProfile(),
     watchSelectSavedPuzzle(),
-    watchSelectCreatedPuzzle()
+    watchSelectCreatedPuzzle(),
+    watchSelectCompletedPuzzle(),
+    watchSolvePuzzle()
 ];

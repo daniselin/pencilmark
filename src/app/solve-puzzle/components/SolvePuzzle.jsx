@@ -5,6 +5,7 @@ import React, {useCallback, useEffect} from "react";
 import {connect} from "react-redux";
 import {pick} from "lodash";
 import PuzzleGrid from "../../build-puzzle/components/PuzzleGrid";
+import Loading from "../../layout/Loading";
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -12,7 +13,7 @@ const mapStateToProps = (state, ownProps) => {
         ...pick(ownProps.match, [
             "params"
         ]),
-        ...pick(state.solvePuzzle, ["loadedPuzzle"])
+        ...pick(state.solvePuzzle, ["loadedPuzzle", "isLoading"])
     };
 };
 
@@ -28,7 +29,8 @@ const SolvePuzzle = (props) => {
     const {
         actions,
         params,
-        loadedPuzzle
+        loadedPuzzle,
+        isLoading
     } = props;
 
     const {
@@ -49,10 +51,11 @@ const SolvePuzzle = (props) => {
     }, [id, initialize]);
 
     return(
-        <MainContainer section="solve-puzzle"
-                       title={<h1 className='p-3'>{loadedPuzzle.name}</h1>}>
-            <PuzzleGrid/>
-        </MainContainer>
+            (isLoading) ? <Loading/> :
+                <MainContainer section="solve-puzzle"
+                               title={<h1 className='p-3'>{loadedPuzzle.name}</h1>}>
+                    <PuzzleGrid/>
+                </MainContainer>
     );
 };
 

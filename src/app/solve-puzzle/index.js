@@ -1,7 +1,14 @@
 import some from "lodash/some";
 import forEach from "lodash/forEach";
 import "../utils";
-import {index} from "../utils";
+import {
+    hasPencilmark,
+    index,
+    isSelectionAllDigits,
+    selectionHasColor,
+    selectionHasDigit,
+    selectionHasPencilmark
+} from "../utils";
 
 export const types = {
     INITIALIZE_SOLVE_PUZZLE: "solve-puzzle/INITIALIZE_SOLVE_PUZZLE",
@@ -20,6 +27,8 @@ export const types = {
     VIEW_PUZZLE: "solve-puzzle/VIEW_PUZZLE",
     SET_RATING: "solve-puzzle/SET_RATING",
     COMPLETE_PUZZLE_REQUEST: "solve-puzzle/COMPLETE_PUZZLE_REQUEST",
+    CHANGE_ENTER_MODE: "solve-puzzle/CHANGE_ENTER_MODE",
+    ROTATE_ENTER_MODE: "solve-puzzle/ROTATE_ENTER_MODE",
 };
 
 export const initialState = {
@@ -30,8 +39,1824 @@ export const initialState = {
         row: 10,
         col: 10
     },
-    cornerDigits: {},
-    centerDigits: {},
+    cornerDigits: {
+        1: {
+            1: {1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false},
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        2: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        3: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        4: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        5: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        6: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        7: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        8: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        9: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        }
+    },
+    centerDigits: {
+        1: {
+            1: {1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false},
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        2: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        3: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        4: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        5: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        6: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        7: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        8: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        },
+        9: {
+            1: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            2: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            3: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            4: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            5: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            6: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            7: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            8: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            },
+            9: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+                5: false,
+                6: false,
+                7: false,
+                8: false,
+                9: false
+            }
+        }
+    },
     cellColors: '_________________________________________________________________________________',
     selectedCells: [],
     addingCells: true,
@@ -40,14 +1865,21 @@ export const initialState = {
     loadedPuzzle: {
         given_digits: '_________________________________________________________________________________'
     },
-    rating: 0
+    rating: 0,
+    enterMode: "digit"
 };
 
 export default (state = initialState, action) => {
     switch (action.type) {
+        case types.INITIALIZE_SOLVE_PUZZLE:
+            return {
+                ...state,
+                isLoading: true
+            }
         case types.INITIALIZE_SOLVE_PUZZLE_SUCCESS:
             return {
                 ...state,
+                isLoading: false,
                 currentDigits: action.puzzle.puzzle.given_digits,
                 selectedCell: {
                     box: 10,
@@ -57,6 +1889,1825 @@ export default (state = initialState, action) => {
                 },
                 selectedCells: [],
                 conflictCells: [],
+                cellColors: initialState.cellColors,
+                centerDigits:  {
+                    1: {
+                        1: {1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false},
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    2: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    3: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    4: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    5: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    6: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    7: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    8: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    9: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    }
+                },
+                cornerDigits:  {
+                    1: {
+                        1: {1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false},
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    2: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    3: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    4: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    5: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    6: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    7: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    8: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    },
+                    9: {
+                        1: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        2: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        3: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        4: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        5: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        6: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        7: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        8: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        },
+                        9: {
+                            1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false
+                        }
+                    }
+                },
                 loadedPuzzle: action.puzzle.puzzle
             }
         case types.CELL_CLICK: {
@@ -96,8 +3747,7 @@ export default (state = initialState, action) => {
                         selectedCell: initialState.selectedCell
                     }
                 }
-            }
-            else {
+            } else {
                 return {
                     ...state,
                     selectedCells: [{
@@ -141,7 +3791,6 @@ export default (state = initialState, action) => {
                 const newSelectedCells = state.selectedCells.filter((aCell) => {
                     return (aCell.row !== drugCell.row || aCell.col !== drugCell.col)
                 });
-                console.log(newSelectedCells);
                 return {
                     ...state,
                     selectedCells: newSelectedCells,
@@ -199,25 +3848,134 @@ export default (state = initialState, action) => {
             const selectedCell = {...state.selectedCell};
             const selectedCells = [...state.selectedCells];
             const cells = {...state.currentDigits};
+            const cellColors = {...state.cellColors};
             const loadedPuzzle = {...state.loadedPuzzle}
-            const newValue = action.newValue;
-            if (selectedCell.row !== 10) {
-                const selectedCellIndex = (selectedCell.col - 1) * 9 + (selectedCell.row - 1);
-                cells[selectedCellIndex] = newValue;
-            } else {
-                forEach(selectedCells, (cell) => {
-                    if (loadedPuzzle.given_digits.charAt(index(cell.col, cell.row)) !== cells[index(cell.col, cell.row)] ||
-                        cells[index(cell.col, cell.row)] === "_") {
+            const value = action.value;
+            const mode = state.enterMode;
+            const cornerDigits = {...state.cornerDigits};
+            const centerDigits = {...state.centerDigits};
 
-                        const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
-                        cells[selectedCellIndex] = newValue;
+            switch (mode) {
+                case "digit": {
+                    if (selectedCell.row !== 10) {
+                        const selectedCellIndex = (selectedCell.col - 1) * 9 + (selectedCell.row - 1);
+                        cells[selectedCellIndex] = value;
+                    } else {
+                        forEach(selectedCells, (cell) => {
+                            if (loadedPuzzle.given_digits.charAt(index(cell.col, cell.row)) !== cells[index(cell.col, cell.row)] ||
+                                cells[index(cell.col, cell.row)] === "_") {
+
+                                const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
+                                cells[selectedCellIndex] = value;
+                            }
+                        });
                     }
-                });
-            }
+                    return {
+                        ...state,
+                        currentDigits: Object.values(cells).join('')
+                    }
+                }
+                case "corner": {
+                    if (selectedCell.row !== 10) {
+                        return {
+                            ...state,
+                            cornerDigits: {
+                                ...state.cornerDigits,
+                                [selectedCell.col]: {
+                                ...state.cornerDigits[selectedCell.col],
+                                [selectedCell.row]: {
+                                    ...state.cornerDigits[selectedCell.col][selectedCell.row],
+                                    [value]: !state.cornerDigits[selectedCell.col][selectedCell.row][value]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    else {
+                        let isAllTrue = true;
+                        forEach(selectedCells, (cell) => {
+                            const cellCol = cell.col;
+                            const cellRow = cell.row;
+                            if (!state.cornerDigits[cellCol][cellRow][value]) {
+                                isAllTrue = false;
+                            }
+                        });
+                        if (isAllTrue) {
+                            forEach(selectedCells, (cell) => {
+                                cornerDigits[cell.col][cell.row][value] = false;
+                            })
+                        } else {
+                            forEach(selectedCells, (cell) => {
+                                cornerDigits[cell.col][cell.row][value] = true;
+                            })
+                        }
+                        return {
+                            ...state,
+                            cornerDigits: cornerDigits
+                        }
+                    }
+                }
+                case "centre": {
+                    if (selectedCell.row !== 10) {
+                        return {
+                            ...state,
+                            centerDigits: {
+                                ...state.centerDigits,
+                                [selectedCell.col]: {
+                                ...state.centerDigits[selectedCell.col],
+                                [selectedCell.row]: {
+                                    ...state.centerDigits[selectedCell.col][selectedCell.row],
+                                    [value]: !state.centerDigits[selectedCell.col][selectedCell.row][value]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    else {
+                        let isAllTrue = true;
+                        forEach(selectedCells, (cell) => {
+                            const cellCol = cell.col;
+                            const cellRow = cell.row;
+                            if (!state.centerDigits[cellCol][cellRow][value]) {
+                                isAllTrue = false;
+                            }
+                        });
+                        if (isAllTrue) {
+                            forEach(selectedCells, (cell) => {
+                                centerDigits[cell.col][cell.row][value] = false;
+                            })
+                        } else {
+                            forEach(selectedCells, (cell) => {
+                                centerDigits[cell.col][cell.row][value] = true;
+                            });
+                        }
+                        return {
+                            ...state,
+                            centerDigits: centerDigits
+                        }
+                    }
+                }
+                case "colour": {
+                    if (selectedCell.row !== 10) {
+                        const selectedCellIndex = (selectedCell.col - 1) * 9 + (selectedCell.row - 1);
+                        cellColors[selectedCellIndex] = value === "0" ? "_" : value;
+                    } else {
+                        forEach(selectedCells, (cell) => {
+                            if (loadedPuzzle.given_digits.charAt(index(cell.col, cell.row)) !== cellColors[index(cell.col, cell.row)] ||
+                                cellColors[index(cell.col, cell.row)] === "_") {
 
-            return {
-                ...state,
-                currentDigits: Object.values(cells).join('')
+                                const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
+                                cellColors[selectedCellIndex] = value === "0" ? "_" : value;
+                            }
+                        });
+                    }
+                    return {
+                        ...state,
+                        cellColors: Object.values(cellColors).join('')
+                    }
+                }
+                default:
+                    return state
             }
         }
         case types.CELL_VALUE_DELETE: {
@@ -225,23 +3983,238 @@ export default (state = initialState, action) => {
             const selectedCells = [...state.selectedCells];
             const cells = {...state.currentDigits};
             const loadedPuzzle = {...state.loadedPuzzle};
+            const cellColors = {...state.cellColors};
+            const cornerDigits = {...state.cornerDigits};
+            const centerDigits = {...state.centerDigits};
 
             if (selectedCell.row !== 10) {
-                const selectedCellIndex = (selectedCell.col - 1) * 9 + (selectedCell.row - 1);
-                cells[selectedCellIndex] = "_";
-            } else {
-                forEach(selectedCells, (cell) => {
-                    if (loadedPuzzle.given_digits.charAt(index(cell.col, cell.row)) !== cells[index(cell.col, cell.row)] ||
-                        cells[index(cell.col, cell.row)] === "_") {
-                        const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
-                        cells[selectedCellIndex] = "_";
+                if (cells[index(selectedCell.col, selectedCell.row)] !== "_" && loadedPuzzle["given_digits"].charAt(index(selectedCell.col, selectedCell.row)) === "_") {
+                    cells[index(selectedCell.col, selectedCell.row)] = "_";
+                    return {
+                        ...state,
+                        currentDigits: Object.values(cells).join('')
                     }
-                });
-            }
+                }
+                else if (state.enterMode === "corner" && hasPencilmark(state.cornerDigits[selectedCell.col][selectedCell.row])) {
+                    return {
+                        ...state,
+                        cornerDigits: {
+                            ...state.cornerDigits,
+                            [selectedCell.col]: {
+                                ...state.cornerDigits[selectedCell.col],
+                                [selectedCell.row]: {1: false,
+                                    2: false,
+                                    3: false,
+                                    4: false,
+                                    5: false,
+                                    6: false,
+                                    7: false,
+                                    8: false,
+                                    9: false}
+                            }
+                        }
+                    }
+                }
+                else if (state.enterMode === "centre" && hasPencilmark(state.centerDigits[selectedCell.col][selectedCell.row])) {
+                    return {
+                        ...state,
+                        centerDigits: {
+                            ...state.centerDigits,
+                            [selectedCell.col]: {
+                                ...state.centerDigits[selectedCell.col],
+                                [selectedCell.row]: {1: false,
+                                    2: false,
+                                    3: false,
+                                    4: false,
+                                    5: false,
+                                    6: false,
+                                    7: false,
+                                    8: false,
+                                    9: false}
+                            }
+                        }
+                    }
+                }
+                else if (state.enterMode === "colour" && state.cellColors.charAt(index(selectedCell.col, selectedCell.row)) !== "_") {
+                    cellColors[index(selectedCell.col, selectedCell.row)] = "_";
+                    return {
+                        ...state,
+                        cellColors: Object.values(cellColors).join('')
+                    };
+                }
 
-            return {
-                ...state,
-                currentDigits: Object.values(cells).join('')
+                else if (hasPencilmark(state.centerDigits[selectedCell.col][selectedCell.row])) {
+                    return {
+                        ...state,
+                        centerDigits: {
+                            ...state.centerDigits,
+                            [selectedCell.col]: {
+                                ...state.centerDigits[selectedCell.col],
+                                [selectedCell.row]: {1: false,
+                                    2: false,
+                                    3: false,
+                                    4: false,
+                                    5: false,
+                                    6: false,
+                                    7: false,
+                                    8: false,
+                                    9: false}
+                            }
+                        }
+                    }
+                }
+                else if (hasPencilmark(state.cornerDigits[selectedCell.col][selectedCell.row])) {
+                    return {
+                        ...state,
+                        cornerDigits: {
+                            ...state.cornerDigits,
+                            [selectedCell.col]: {
+                                ...state.cornerDigits[selectedCell.col],
+                                [selectedCell.row]: {1: false,
+                                    2: false,
+                                    3: false,
+                                    4: false,
+                                    5: false,
+                                    6: false,
+                                    7: false,
+                                    8: false,
+                                    9: false}
+                            }
+                        }
+                    }
+                }
+                else if (state.cellColors.charAt(index(selectedCell.col, selectedCell.row)) !== "_") {
+                    cellColors[index(selectedCell.col, selectedCell.row)] = "_";
+                    return {
+                        ...state,
+                        cellColors: Object.values(cellColors).join('')
+                    };
+                }
+            }
+            else {
+                if (isSelectionAllDigits(selectedCells, cells)) {
+                    forEach(selectedCells, (cell) => {
+                        cells[index(cell.col, cell.row)] = "_";
+                    });
+                    return {
+                        ...state,
+                        currentDigits: Object.values(cells).join('')
+                    };
+                }
+                else if (state.enterMode === "corner" && selectionHasPencilmark(selectedCells, state.cornerDigits)){
+                    forEach(selectedCells, (cell) => {
+                        cornerDigits[cell.col][cell.row] = {1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false}
+                    });
+                    return {
+                        ...state,
+                        cornerDigits: cornerDigits
+                    };
+                }
+                else if (state.enterMode === "centre" && selectionHasPencilmark(selectedCells, state.centerDigits)){
+                    forEach(selectedCells, (cell) => {
+                        centerDigits[cell.col][cell.row] = {1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false}
+                    });
+                    return {
+                        ...state,
+                        centerDigits: centerDigits
+                    };
+                }
+                else if (state.enterMode === "colour" && selectionHasColor(selectedCells, cellColors)){
+                    forEach(selectedCells, (cell) => {
+                        cellColors[index(cell.col, cell.row)] = "_";
+                    });
+                    return {
+                        ...state,
+                        cellColors: Object.values(cellColors).join('')
+                    }
+                }
+                else if (state.enterMode === "digit" && selectionHasDigit(selectedCells, cells, loadedPuzzle.given_digits)) {
+                    console.log(loadedPuzzle);
+                    forEach(selectedCells, (cell) => {
+                        if (loadedPuzzle["given_digits"].charAt(index(cell.col, cell.row)) === "_") {
+                            cells[index(cell.col, cell.row)] = "_";
+                        }
+                    });
+                    return {
+                        ...state,
+                        currentDigits: Object.values(cells).join('')
+                    }
+                }
+                else if (selectionHasDigit(selectedCells, cells, loadedPuzzle.given_digits)) {
+                    forEach(selectedCells, (cell) => {
+                        if (loadedPuzzle["given_digits"].charAt(index(cell.col, cell.row)) === "_") {
+                            cells[index(cell.col, cell.row)] = "_";
+                        }
+                    });
+                    return {
+                        ...state,
+                        currentDigits: Object.values(cells).join('')
+                    }
+                }
+                else if (selectionHasPencilmark(selectedCells, state.centerDigits)){
+                    forEach(selectedCells, (cell) => {
+                        centerDigits[cell.col][cell.row] = {1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false}
+                    });
+                    return {
+                        ...state,
+                        centerDigits: centerDigits
+                    };
+                }
+                else if (selectionHasPencilmark(selectedCells, state.cornerDigits)){
+                    forEach(selectedCells, (cell) => {
+                        cornerDigits[cell.col][cell.row] = {1: false,
+                            2: false,
+                            3: false,
+                            4: false,
+                            5: false,
+                            6: false,
+                            7: false,
+                            8: false,
+                            9: false}
+                    });
+                    return {
+                        ...state,
+                        cornerDigits: cornerDigits
+                    };
+                }
+                else if (selectionHasColor(selectedCells, state.cellColors)){
+                    forEach(selectedCells, (cell) => {
+                        cellColors[index(cell.col, cell.row)] = "_";
+                    });
+                    return {
+                        ...state,
+                        cellColors: Object.values(cellColors).join('')
+                    }
+                }
+                else {
+                    return {
+                        ...state
+                    };
+                }
             }
         }
         case types.FOCUS_OFF_CELLS:
@@ -262,6 +4235,36 @@ export default (state = initialState, action) => {
             return {...state,
                 rating: (action.newRating * 2)
             }
+        case types.CHANGE_ENTER_MODE:
+            return {...state,
+                enterMode: action.mode
+            }
+        case types.ROTATE_ENTER_MODE: {
+            if (state.enterMode === "digit") {
+                return {
+                    ...state,
+                    enterMode: "corner"
+                }
+            }
+            else if (state.enterMode === "corner") {
+                return {
+                    ...state,
+                    enterMode: "centre"
+                }
+            }
+            else if (state.enterMode === "centre") {
+                return {
+                    ...state,
+                    enterMode: "colour"
+                }
+            }
+            else if (state.enterMode === "colour") {
+                return {
+                    ...state,
+                    enterMode: "digit"
+                }
+            }
+        }
         default:
             return state
     }
@@ -277,8 +4280,8 @@ export const actions = {
     controlClickCell: (box, cell, row, col) => {
         return {type: types.CONTROL_CELL_CLICK, box, cell, row, col};
     },
-    changeCellValue: (newValue) => {
-        return {type: types.CELL_VALUE_CHANGE, newValue}
+    changeCellValue: (value) => {
+        return {type: types.CELL_VALUE_CHANGE, value}
     },
     deleteCellValue: () => {
         return {type: types.CELL_VALUE_DELETE}
@@ -304,11 +4307,14 @@ export const actions = {
     setRating: (newRating) => {
         return {type: types.SET_RATING, newRating}
     },
-    submitRating: () => {
-        return {type: types.SUBMIT_RATING_REQUEST}
-    },
     completePuzzle: () => {
         return {type: types.COMPLETE_PUZZLE_REQUEST}
+    },
+    changeEnterMode: (mode) => {
+        return {type: types.CHANGE_ENTER_MODE, mode}
+    },
+    rotateEnterMode: () => {
+        return {type: types.ROTATE_ENTER_MODE}
     }
 }
 

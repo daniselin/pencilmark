@@ -3,7 +3,6 @@ import {pick} from "lodash";
 import {connect} from "react-redux";
 import ReactStars from "react-rating-stars-component/dist/react-stars";
 import {actions as solveActions} from "..";
-import SubmitButton from "../../form/components/SubmitButton";
 
 
 const mapStateToProps = (state) => {

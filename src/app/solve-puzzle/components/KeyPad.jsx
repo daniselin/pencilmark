@@ -1,10 +1,10 @@
-import React from "react";
+import React, {useCallback, useEffect} from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {actions as solvePuzzleActions} from "../index";
-import TextField from "../../form/components/TextField";
 import KeyPadButton from "./KeyPadButton";
 import {pick} from "lodash";
+import {index} from "../../utils";
 
 
 const mapStateToProps = (state) => {
@@ -18,133 +18,175 @@ const mapDispatchToProps = (dispatch) => {
     return {actions: bindActionCreators({
             changeCellValue: solvePuzzleActions.changeCellValue,
             deleteCellValue: solvePuzzleActions.deleteCellValue,
-            onTextFieldFocus: solvePuzzleActions.onTextFieldFocus
+            changeEnterMode: solvePuzzleActions.changeEnterMode
         }, dispatch)};
 };
 
 const KeyPad = (props) => {
     const {
-        cells,
-        selectedCell,
-        selectedCells,
-        height,
         width,
-        loadedPuzzle,
         actions
     } = props;
 
     const {
         changeCellValue,
         deleteCellValue,
-        createPuzzle,
-        savePuzzle,
-        onTextFieldFocus
+        changeEnterMode
     } = actions;
 
     const keyPadStyle = {
-        height: height
+        height: width * .2,
+        width: (width * .2)
     }
 
+    const rotateEnterMode = useCallback ((e) => {
+        e.preventDefault();
+        if (e.key === " ") {
+            const {rotateEnterMode} = props;
+            if (rotateEnterMode) {
+                rotateEnterMode(e.key);
+            }
+        }
+    }, [props]);
+
+    useEffect(() => {
+        document.addEventListener('keydown', rotateEnterMode)
+        return function cleanup() {
+            document.removeEventListener('keydown', rotateEnterMode);
+        }
+    }, [rotateEnterMode]);
+
     return(
-        <div className='container-fluid justify-content-center' style={keyPadStyle}>
-            <div className='row' style={{height: '16%'}}>
-                <div className="h6">{loadedPuzzle.rule_set}</div>
-            </div>
-            <div className='row' style={{height: '10%'}}>
-                <div className='col-2 g-0'>
-                    <KeyPadButton color="purple" value={1} onClick={(e) =>
-                    {
-                        changeCellValue(1);
-                        e.stopPropagation();
-                    }
-                    }/>
-                </div>
-                <div className='col-2 g-0'>
-                    <KeyPadButton color="purple" value={2} onClick={(e) =>
-                    {
-                        changeCellValue(2);
-                        e.stopPropagation();
-                    }
-                    }/>
-                </div>
-                <div className='col-2 g-0'>
-                    <KeyPadButton color="purple" value={3} onClick={(e) =>
-                    {
-                        changeCellValue(3);
-                        e.stopPropagation();
-                    }
-                    }/>
-                </div>
-            </div>
-            <div className='row' style={{height: '10%'}}>
-                <div className='col-2 g-0'>
-                    <KeyPadButton color="purple" value={4} onClick={(e) =>
-                    {
-                        changeCellValue(4);
-                        e.stopPropagation();
-                    }
-                    }/>
-                </div>
-                <div className='col-2 g-0'>
-                    <KeyPadButton color="purple" value={5} onClick={(e) =>
-                    {
-                        changeCellValue(5);
-                        e.stopPropagation();
-                    }
-                    }/>
-                </div>
-                <div className='col-2 g-0'>
-                    <KeyPadButton color="purple" value={6} onClick={(e) =>
-                    {
-                        changeCellValue(6);
-                        e.stopPropagation();
-                    }
-                    }/>
-                </div>
-            </div>
-            <div className='row' style={{height: '10%'}}>
-                <div className='col-2 g-0'>
-                    <KeyPadButton color="purple" value={7} onClick={(e) =>
-                    {
-                        changeCellValue(7);
-                        e.stopPropagation();
-                    }
-                    }/>
-                </div>
-                <div className='col-2 g-0'>
-                    <KeyPadButton color="purple" value={8} onClick={(e) =>
-                    {
-                        changeCellValue(8);
-                        e.stopPropagation();
-                    }
-                    }/>
-                </div>
-                <div className='col-2 g-0'>
-                    <KeyPadButton color="purple" value={9} onClick={(e) =>
-                    {
-                        changeCellValue(9);
-                        e.stopPropagation();
-                    }
-                    }/>
-                </div>
-            </div>
-            <div className='row' style={{height: '10%'}}>
-                <div className='col-2 g-0'>
-                    <KeyPadButton color="purple" value={0} onClick={(e) =>
-                    {
-                        changeCellValue(0);
-                        e.stopPropagation();
-                    }
-                    }/>
-                </div>
-                <div className='col-4 g-0'>
-                    <KeyPadButton color="purple" value={"Delete"} onClick={(e) => {
-                        deleteCellValue();
-                        e.stopPropagation();
-                    }}/>
-                </div>
-            </div>
-        </div>
+        <table style={keyPadStyle}>
+            <tbody>
+                <tr style={{height: "25%"}}>
+                    <td style={{width: "25%"}}>
+                        <KeyPadButton color="purple" value={1} width={(width * .2)} onClick={(e) =>
+                        {
+                            changeCellValue(1);
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                    <td style={{width: "25%"}}>
+                        <KeyPadButton color="purple" value={2} width={(width * .2)} onClick={(e) =>
+                        {
+                            changeCellValue(2);
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                    <td style={{width: "25%"}}>
+                        <KeyPadButton color="purple" value={3} width={(width * .2)} onClick={(e) =>
+                        {
+                            changeCellValue(3);
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                    <td style={{width: "25%"}}>
+                        <KeyPadButton outline="purple" color="white" value="digit" mode="digit" width={(width * .2)} onClick={(e) =>
+                        {
+                            changeEnterMode("digit");
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                </tr>
+                <tr style={{height: "25%"}}>
+                    <td>
+                        <KeyPadButton color="purple" value={4} width={(width * .2)} onClick={(e) =>
+                        {
+                            changeCellValue(4);
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                    <td>
+                        <KeyPadButton color="purple" value={5} width={(width * .2)} onClick={(e) =>
+                        {
+                            changeCellValue(5);
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                    <td>
+                        <KeyPadButton color="purple" value={6} width={(width * .2)} onClick={(e) =>
+                        {
+                            changeCellValue(6);
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                    <td style={{width: "25%"}}>
+                        <KeyPadButton outline="purple" color="white" value="corner" mode="corner" width={(width * .2)} onClick={(e) =>
+                        {
+                            changeEnterMode("corner");
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                </tr>
+                <tr style={{height: "25%"}}>
+                    <td>
+                        <KeyPadButton color="purple" value={7} width={(width * .2)} onClick={(e) =>
+                        {
+                            changeCellValue(7);
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                    <td>
+                        <KeyPadButton color="purple" value={8} width={(width * .2)} onClick={(e) =>
+                        {
+                            changeCellValue(8);
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                    <td>
+                        <KeyPadButton color="purple" value={9} width={(width * .2)} onClick={(e) =>
+                        {
+                            changeCellValue(9);
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                    <td style={{width: "25%"}}>
+                        <KeyPadButton outline="purple" color="white" value="centre" mode="centre" width={(width * .2)} onClick={(e) =>
+                        {
+                            changeEnterMode("centre");
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                </tr>
+                <tr style={{height: "25%"}}>
+                    <td>
+                        <KeyPadButton color="purple" value={0} width={(width * .2)} onClick={(e) =>
+                        {
+                            changeCellValue(0);
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                    <td colSpan={2}>
+                        <KeyPadButton color="purple" value={"X"} width={(width * .2)} onClick={(e) => {
+                            deleteCellValue();
+                            e.stopPropagation();
+                        }}/>
+                    </td>
+                    <td style={{width: "25%"}}>
+                        <KeyPadButton outline="purple" color="white" value="colour" mode="colour" width={(width * .2)} onClick={(e) =>
+                        {
+                            changeEnterMode("colour");
+                            e.stopPropagation();
+                        }
+                        }/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     );
 };
 

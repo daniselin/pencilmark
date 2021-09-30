@@ -5,8 +5,6 @@ import React, {useCallback} from "react";
 import SubmitButton from "../../form/components/SubmitButton";
 import * as PropTypes from "prop-types";
 import {connect} from "react-redux";
-import ModalDismissButton from "./ModalDismissButton";
-import ModalPromptButton from "./ModalPromptButton";
 
 const mapStateToProps = (state) => {
     return {...pick(state.modal, [

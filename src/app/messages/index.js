@@ -9,7 +9,9 @@ export const types = {
     RESET_FATAL_ERROR_MESSAGE: "messages/RESET_FATAL_ERROR_MESSAGE",
 };
 
-export const initialState = {};
+export const initialState = {
+    isLoading: false
+};
 
 export default (state = initialState, action) => {
     switch (action.type) {

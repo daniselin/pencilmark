@@ -4,6 +4,7 @@ import MainContainer from "../../layout/MainContainer";
 import React, {useCallback, useEffect} from "react";
 import {connect} from "react-redux";
 import {pick} from "lodash/object";
+import Loading from "../../layout/Loading";
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -13,6 +14,9 @@ const mapStateToProps = (state, ownProps) => {
         ]),
         ...pick(state.user, [
             "username",
+        ]),
+        ...pick(state.profile, [
+            "isLoading"
         ])
     };
 };
@@ -28,6 +32,7 @@ const mapDispatchToProps = (dispatch) => {
 const UserProfile = (props) => {
     const {
         params,
+        isLoading,
         actions
     } = props;
 
@@ -45,6 +50,7 @@ const UserProfile = (props) => {
     }, [username, initialize]);
 
     return(
+        isLoading ? <Loading/> :
         <MainContainer section="profile"
                        title={""}>}>
         </MainContainer>

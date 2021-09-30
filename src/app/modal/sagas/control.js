@@ -1,4 +1,4 @@
-import {takeEvery, delay} from "redux-saga/effects";
+import {delay, takeEvery} from "redux-saga/effects";
 import {types as modalTypes} from "../../modal"
 
 export function* watchCreateModal() {

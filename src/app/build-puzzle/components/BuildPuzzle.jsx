@@ -5,10 +5,11 @@ import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import PuzzleGrid from "./PuzzleGrid";
 import {pick} from "lodash";
+import Loading from "../../layout/Loading";
 
 
 const mapStateToProps = (state) => {
-    return {...pick(state.buildPuzzle, ["loadedPuzzle"]),};
+    return {...pick(state.buildPuzzle, ["loadedPuzzle", "isLoading"]),};
 };
 
 const mapDispatchToProps = (dispatch) => {
@@ -23,6 +24,7 @@ const BuildPuzzle = (props) => {
     const {
         actions,
         loadedPuzzle,
+        isLoading,
         onCreateModal
     } = props;
 
@@ -35,6 +37,7 @@ const BuildPuzzle = (props) => {
     }, [initializeBuildPuzzle, loadedPuzzle]);
 
     return(
+        (isLoading) ? <Loading/> :
         <MainContainer section="build-puzzle"
                        title={<h1 className='p-3'>Build a Puzzle</h1>}>
             <PuzzleGrid/>

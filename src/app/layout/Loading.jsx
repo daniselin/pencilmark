@@ -3,8 +3,8 @@ import "./Loading.css";
 
 const Loading = () => {
     return (
-        <div className="lodaing-wrapper">
-            <span className="lodaing-center text-center">
+        <div className="loading-wrapper">
+            <span className="loading-center text-center">
                 <h2>Hang on a moment...</h2>
                 <i className="fa fa-spinner fa-spin loading-spinner text-primary"/>
             </span>

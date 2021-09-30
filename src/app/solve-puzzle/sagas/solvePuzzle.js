@@ -1,11 +1,8 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
 import {types as solvePuzzleTypes} from "..";
-import {types as formTypes} from "../../form";
-import {validateCellValueChange} from "../../build-puzzle/sagas/buildPuzzle";
 import apiAxios from "../../../config/axios";
 import hashids from "../../../config/hashids";
 import api from "../../../config/api";
-import {types as buildPuzzleTypes} from "../../build-puzzle";
 import {types as modalTypes} from "../../modal";
 import {types as timerTypes} from "../../timer";
 
@@ -29,12 +26,14 @@ export function* validateCellValueChangeSolve(){
     const {currentDigits} = solvePuzzleState;
 
     try {
-        const response = yield call(apiAxios.post, api.checkPuzzle(), {cells: currentDigits});
-        const conflictCells = response.data["conflictCells"];
-        yield put({type: solvePuzzleTypes.UPDATE_CONFLICT_CELLS, conflictCells});
-        if (solvePuzzleState.currentDigits === solvePuzzleState.loadedPuzzle.solution_digits){
-            yield put({type: timerTypes.STOP_TIMER});
-            yield put({type: modalTypes.CREATE_MODAL, id: "solve-puzzle"});
+        if (solvePuzzleState.enterMode === "digit") {
+            const response = yield call(apiAxios.post, api.checkPuzzle(), {cells: currentDigits});
+            const conflictCells = response.data["conflictCells"];
+            yield put({type: solvePuzzleTypes.UPDATE_CONFLICT_CELLS, conflictCells});
+            if (solvePuzzleState.currentDigits === solvePuzzleState.loadedPuzzle.solution_digits) {
+                yield put({type: timerTypes.STOP_TIMER});
+                yield put({type: modalTypes.CREATE_MODAL, id: "solve-puzzle"});
+            }
         }
     } catch (error) {
         console.log(error);
@@ -80,6 +79,7 @@ export function* completePuzzle(){
     const offsetDate = new Date(date.getTime() - (offset*60*1000));
     try{
         yield call(apiAxios.post, api.completePuzzle(hashids.decode(loadedPuzzle.id)), {
+            name: loadedPuzzle.name,
             user: userState.id,
             time: timerState.time,
             score: 5,

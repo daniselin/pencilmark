@@ -10,7 +10,8 @@ const mapStateToProps = (state, ownProps) => {
         ...pick(state.profile, [
             "profile",
             "createdPuzzles",
-            "savedPuzzles"
+            "savedPuzzles",
+            "completedPuzzles"
         ]),
         ...pick(state.user, ["hasAuthenticated"])
     };
@@ -25,6 +26,7 @@ const Profile = (props) => {
         profile,
         savedPuzzles,
         createdPuzzles,
+        completedPuzzles,
         hasAuthenticated,
         actions
     } = props;
@@ -42,7 +44,9 @@ const Profile = (props) => {
                 <div className='col-8 text-center justify-content-center'>
                     <ProfileMainContent
                         savedPuzzles={savedPuzzles}
-                        createdPuzzles={createdPuzzles}/>
+                        createdPuzzles={createdPuzzles}
+                        completedPuzzles={completedPuzzles}
+                    />
                 </div>
             </div> :
             <NotAuthenticated/>

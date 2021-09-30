@@ -23,7 +23,7 @@ const PuzzleGrid = (props) => {
         width
     } = props;
 
-    const size = Math.min(height, width) * .80;
+    const size = Math.min(height, width) * .7;
 
     const gridStyle = {
         height: size + 3,

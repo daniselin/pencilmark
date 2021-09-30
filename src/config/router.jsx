@@ -1,6 +1,6 @@
 import {ConnectedRouter} from "connected-react-router";
 import {history} from "./store";
-import { Redirect, Route, Switch } from "react-router";
+import {Redirect, Route, Switch} from "react-router";
 import NotFound from "../app/NotFound";
 import React from "react";
 import Authentication from "../app/user/components/Authentication";
