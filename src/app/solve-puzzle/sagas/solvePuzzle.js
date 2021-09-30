@@ -85,7 +85,8 @@ export function* completePuzzle(){
             score: 5,
             rating: solvePuzzleState.rating,
             date: offsetDate.toISOString().split('T')[0],
-            shared: false
+            shared: false,
+            given_digits: loadedPuzzle.given_digits
         });
     } catch (e) {
         console.log(e);
