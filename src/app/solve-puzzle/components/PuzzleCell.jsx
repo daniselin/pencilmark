@@ -59,7 +59,6 @@ const PuzzleCell = (props) => {
                 const {changeCellValue, deleteCellValue} = props;
                 if (changeCellValue) {
                     if (e.key in [9, 1, 2, 3, 4, 5, 6, 7, 8, 0]) {
-                        console.log(e.key)
                         changeCellValue(e.key);
                     } else if (e.key === "Backspace") {
                         deleteCellValue();

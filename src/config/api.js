@@ -3,6 +3,7 @@ import {API_URL} from "./constants";
 const api = {
     retrieveUser: () => API_URL + "/user/",
     createUser: () => API_URL + "/user/create/",
+    searchUsers: () => API_URL + "/user/search/",
 
     getProfile: (username) => API_URL + "/profile/" + username + "/",
 

@@ -5,6 +5,7 @@ import buildPuzzle from "../app/build-puzzle/sagas/buildPuzzle";
 import profile from "../app/profile/sagas/profile";
 import solvePuzzle from "../app/solve-puzzle/sagas/solvePuzzle";
 import modalControl from "../app/modal/sagas/control";
+import search from "../app/user/sagas/search";
 
 export default function* createRootSaga() {
     yield all(
@@ -13,7 +14,8 @@ export default function* createRootSaga() {
             buildPuzzle(),
             profile(),
             solvePuzzle(),
-            modalControl()
+            modalControl(),
+            search(),
         )
     );
 }

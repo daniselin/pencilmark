@@ -15,6 +15,7 @@ import PuzzleBuilder from "../build-puzzle/components/PuzzleBuilder";
 import Profile from "../profile/components/Profile";
 import PuzzleSolver from "../solve-puzzle/components/PuzzleSolver";
 import Loading from "./Loading";
+import UserSearchResults from "../user/search/components/UserSearchResults";
 
 const mapStateToProps = (state) => {
     return {
@@ -93,6 +94,7 @@ const MainContainer = (props) => {
                                 <NavigationLink title="Build Puzzle" link="/puzzle/build"
                                                 active={section === "build-puzzle"}/>
                                 <NavigationLink link="/login/" title="Logout" onClick={() => logoutUser()}/>
+                                <NavigationLink link="/user/search/" title="Search Users"/>
                             </>
                             :
                             <>
@@ -124,6 +126,14 @@ const MainContainer = (props) => {
                             <br/>
                         </>
                         }
+                        {section === "user-search" &&
+                        <>
+                            <UserSearchResults
+                            />
+                            <br/>
+                            <br/>
+                        </>
+                        }
                         {section === "login" &&
                         <Login/>
                         }
@@ -135,7 +145,7 @@ const MainContainer = (props) => {
 };
 
 MainContainer.propTypes = {
-    section: PropTypes.oneOf(["notFound","profile", "build-puzzle", "login", "solve-puzzle"]).isRequired,
+    section: PropTypes.oneOf(["notFound","profile", "build-puzzle", "login", "solve-puzzle", "user-search"]).isRequired,
     secondarySection: PropTypes.string,
     title: PropTypes.oneOfType([
         PropTypes.string,

@@ -4145,7 +4145,6 @@ export default (state = initialState, action) => {
                     }
                 }
                 else if (state.enterMode === "digit" && selectionHasDigit(selectedCells, cells, loadedPuzzle.given_digits)) {
-                    console.log(loadedPuzzle);
                     forEach(selectedCells, (cell) => {
                         if (loadedPuzzle["given_digits"].charAt(index(cell.col, cell.row)) === "_") {
                             cells[index(cell.col, cell.row)] = "_";

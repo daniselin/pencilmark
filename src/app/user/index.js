@@ -9,6 +9,14 @@ export const types = {
     LOGIN_REQUIRED: "user/LOGIN_REQUIRED",
     UPDATE_USER_VALUES: "user/UPDATE_USER_VALUES",
     CLEAR_USER_VALUES: "user/CLEAR_USER_VALUES",
+    INITIALIZE_SEARCH: "user/INITIALIZE_SEARCH",
+    FINISH_INITIALIZE_SEARCH: "user/FINISH_INITIALIZE_SEARCH",
+    SUBMIT_SEARCH: "user/SUBMIT_SEARCH",
+    SUBMIT_SEARCH_REQUEST: "user/SUBMIT_SEARCH_REQUEST",
+    SUBMIT_SEARCH_FAILURE: "user/SUBMIT_SEARCH_FAILURE",
+    SUBMIT_SEARCH_SUCCESS: "user/SUBMIT_SEARCH_SUCCESS",
+    SELECT_PROFILE: "user/SELECT_PROFILE",
+    RESET_USER_SEARCH: "user/RESET_USER_SEARCH",
 }
 
 export const initialState = {
@@ -17,7 +25,11 @@ export const initialState = {
     email: "",
     score: 0,
     hasAuthenticated: false,
-    isLoggingIn: false
+    isLoggingIn: false,
+    userSearchResults: [],
+    isSearchLoading: false,
+    searchErrorMessage: "",
+    isLoading: false
 }
 
 export default (state = initialState, action) => {
@@ -37,6 +49,39 @@ export default (state = initialState, action) => {
             };
         case types.CLEAR_USER_VALUES:
             return {...initialState};
+        case types.INITIALIZE_SEARCH:
+            return {
+                ...state,
+                isLoading: true
+            }
+        case types.FINISH_INITIALIZE_SEARCH:
+            return {
+                ...state,
+                isLoading: false
+            }
+        case types.SUBMIT_SEARCH_REQUEST:
+            return {
+                ...state,
+                isSearchLoading: true
+            };
+        case types.SUBMIT_SEARCH_FAILURE:
+            return {
+                ...state,
+                isSearchLoading: false,
+                searchErrorMessage: action.message
+            };
+        case types.SUBMIT_SEARCH_SUCCESS:
+            return {
+                ...state,
+                isSearchLoading: false,
+                userSearchResults: action.results
+            };
+        case types.RESET_USER_SEARCH:
+            return {
+                ...state,
+                isSearchLoading: false,
+                userSearchResults: []
+            };
         default:
             return state;
     }
@@ -54,5 +99,14 @@ export const actions = {
     },
     initializeAuthentication: () => {
         return {type: types.INITIALIZE_AUTHENTICATION};
+    },
+    initializeSearch: (query) => {
+        return {type: types.INITIALIZE_SEARCH, query};
+    },
+    submitSearch: (query) => {
+        return {type: types.SUBMIT_SEARCH, query};
+    },
+    selectProfile: (index) => {
+        return {type: types.SELECT_PROFILE, index};
     }
 }
