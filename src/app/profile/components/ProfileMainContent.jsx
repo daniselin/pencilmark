@@ -4,6 +4,8 @@ import SavedPuzzles from "./SavedPuzzles";
 import CreatedPuzzles from "./CreatedPuzzles";
 import {pick} from "lodash";
 import CompletedPuzzles from "./CompletedPuzzles";
+import Followers from "./Followers";
+import Following from "./Following";
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -27,6 +29,8 @@ const ProfileMainContent = (props) => {
         savedPuzzles,
         createdPuzzles,
         completedPuzzles,
+        following,
+        followers,
         width,
         actions
     } = props;
@@ -61,6 +65,18 @@ const ProfileMainContent = (props) => {
                                 Completed Puzzles
                             </button>
                         </li>
+                        <li className='nav-item m-2'>
+                            <button id="followers" className='btn btn-outline-primary'
+                                    onClick={(e) => onClick(e)}>
+                                Followers
+                            </button>
+                        </li>
+                        <li className='nav-item m-2'>
+                            <button id="following" className='btn btn-outline-primary'
+                                    onClick={(e) => onClick(e)}>
+                                Following
+                            </button>
+                        </li>
                     </ul>
                 </nav>
                 <>
@@ -72,6 +88,12 @@ const ProfileMainContent = (props) => {
                     }
                     {section === "completedPuzzles" &&
                     <CompletedPuzzles completedPuzzles={completedPuzzles} width={width}/>
+                    }
+                    {section === "followers" &&
+                    <Followers username={profile.username} width={width} profileFollowers={followers}/>
+                    }
+                    {section === "following" &&
+                    <Following username={profile.username} width={width} profileFollowing={following}/>
                     }
                 </>
             </>

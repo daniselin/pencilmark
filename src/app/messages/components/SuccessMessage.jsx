@@ -2,7 +2,7 @@ import {actions} from "../index";
 import {connect} from "react-redux";
 import MessageDismissButton from "./MessageDismissButton";
 import {bindActionCreators} from "redux";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 
 const mapStateToProps = (state) => {
     if (state.messages && state.messages.successMessage) {
@@ -34,7 +34,7 @@ const SuccessMessage = (props) => {
     };
 
     return (
-        <div className="alert alert-danger alert-icon" role="alert">
+        <div className="alert alert-success alert-icon alert-dismissible" role="alert">
             <MessageDismissButton/>
             {successMessage}
         </div>

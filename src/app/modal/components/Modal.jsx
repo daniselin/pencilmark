@@ -32,9 +32,12 @@ const Modal = (props) => {
         processingLabel,
         onSubmit,
         onManualDestroy,
+        onDelete,
         submitLabel,
         submitColor,
+        deleteColor,
         cancelLabel,
+        deleteLabel,
         cancelColor,
         children,
         show,
@@ -57,6 +60,13 @@ const Modal = (props) => {
         onManualDestroy && onManualDestroy(id);
         destroyModal(id);
     }, [destroyModal, id, onManualDestroy]
+    );
+
+    const del = useCallback((event) => {
+        event.preventDefault();
+        destroyModal(id);
+        onDelete && onDelete(id);
+    }, [destroyModal, id, onDelete]
     );
 
     const ariaLabelledBy = () => {
@@ -96,6 +106,16 @@ const Modal = (props) => {
                         </div>
 
                         <div className="modal-footer">
+                            {onDelete &&
+                            <SubmitButton
+                                id="modal-delete"
+                                color={deleteColor}
+                                className="btn-sm"
+                                data-dismiss="modal"
+                                onClick={del}
+                                label={deleteLabel}
+                            />
+                            }
                             <SubmitButton
                                 id="modal-cancel"
                                 color={cancelColor}

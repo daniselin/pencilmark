@@ -5,7 +5,7 @@ import TextField from "../../../form/components/TextField";
 import SubmitButton from "../../../form/components/SubmitButton";
 import {bindActionCreators} from "redux";
 import {actions as userActions} from "../../index";
-import {map} from "lodash";
+import {find, map} from "lodash";
 import SavedPuzzle from "../../../profile/components/SavedPuzzle";
 import UserCard from "../../components/UserCard";
 
@@ -16,7 +16,8 @@ const mapStateToProps = (state, ownProps) => {
             "params"
         ]),
         ...pick(state.user, [
-            "userSearchResults"
+            "userSearchResults",
+            "following"
         ]),
         ...pick(state.windowSize, ["width"])
     };
@@ -35,6 +36,7 @@ const UserSearchResults = (props) => {
     const {
         params,
         userSearchResults,
+        following,
         width,
         actions,
     } = props;
@@ -45,8 +47,6 @@ const UserSearchResults = (props) => {
     } = actions;
 
     const q = params ? params["q"] : "";
-
-    console.log(userSearchResults)
 
     return(
         <div className="container-fluid justify-content-center">
@@ -69,8 +69,11 @@ const UserSearchResults = (props) => {
             <div className="row justify-content-center text-center">
                 {map(userSearchResults, (user, i) =>
                     <div className={width < 970 ? "col-6" : "col-4"}>
-                        <UserCard key={user["username"]} user={userSearchResults[i]} onClick={(e) => {
-                            selectProfile(i)
+                        <UserCard key={user["username"]} user={userSearchResults[i]} isFollowing={
+                            find(following, (follower) => {
+                                return follower.following === user["id"]
+                            })} onClick={(e) => {
+                            selectProfile(user["username"])
                         }}/>
                     </div> )}
             </div>

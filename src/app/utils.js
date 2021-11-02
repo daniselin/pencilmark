@@ -4,6 +4,14 @@ export const formatDate = date => {
     return date.substring(5, 7) + "/" + date.substring(8, 10) + "/" + date.substring(0, 4);
 }
 
+export const formatRating = rating => {
+    if (rating.length <= 4) {
+        return rating;
+    } else {
+        return rating.substring(0, 4);
+    }
+}
+
 export const orderByRows = cells => {
     let cellsByRows = '_________________________________________________________________________________';
 
@@ -195,8 +203,6 @@ export function isInt(value) {
 }
 
 export function shadeColor(color, percent) {
-
-    // console.log(color)
 
     let R = parseInt(color.substring(1,3),16);
     let G = parseInt(color.substring(3,5),16);

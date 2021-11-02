@@ -35,7 +35,7 @@ const CompletedPuzzle = (props) => {
                 <SmallGrid cells={puzzle["given_digits"]}/>
             </div>
             <div className='card-footer'>
-                {formatDate(puzzle["date"])} {formatTime(puzzle["time"])}
+                {formatDate(puzzle["date"])} {formatTime(puzzle["time"])} {puzzle["average_rating"]}
             </div>
         </div>
     );

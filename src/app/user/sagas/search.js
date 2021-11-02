@@ -49,11 +49,11 @@ export function* watchSelectProfile() {
 
 export function* selectProfile(action){
 
-    const {index} = action;
-    const userState = yield select(getUserState);
+    const {username} = action;
 
     yield put(replace("/user/"));
-    yield put(push(userState.userSearchResults[index].username));
+    console.log(username)
+    yield put(push(username));
     yield put({type: userTypes.RESET_USER_SEARCH});
 };
 

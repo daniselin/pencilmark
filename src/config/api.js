@@ -6,19 +6,19 @@ const api = {
     searchUsers: () => API_URL + "/user/search/",
 
     getProfile: (username) => API_URL + "/profile/" + username + "/",
+    followOrUnfollow: () => API_URL + "/user/follow/",
+    getFollowers: (username) => API_URL + "/user/" + username + "/followers/",
+    getFollowing: (username) => API_URL + "/user/" + username + "/following/",
 
     createPuzzle: () => API_URL + "/puzzle/create/",
     checkPuzzle: () => API_URL + "/puzzle/check/",
     getPuzzle: (id) => API_URL + "/puzzle/" + id + "/",
     completePuzzle: (id) => API_URL + "/puzzle/solved/" + id + "/",
+    deletePuzzle: () => API_URL + "/puzzle/delete/",
 
     obtainToken: () => API_URL + "/token/obtain/",
     refreshToken: () => API_URL + "/token/refresh/",
     blacklistToken: () => API_URL + "/logout/",
-
-    verifyToken: () => API_URL + "/token/verify/",
-
-    hello: () => API_URL + "/hello/",
 }
 
 export default api;

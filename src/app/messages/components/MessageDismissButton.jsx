@@ -1,6 +1,6 @@
 import {actions} from "../index";
 import {connect} from "react-redux";
-import {useCallback} from "react";
+import React, {useCallback} from "react";
 import {bindActionCreators} from "redux";
 
 const mapStateToProps = (state) => {
@@ -26,8 +26,7 @@ const MessageDismissButton = (props) => {
     );
 
     return (
-        <button type="button" className="close" onClick={onResetSuccessMessage}>
-            <span aria-hidden="true">&times;</span>
+        <button type="button" className="btn-sm btn-close" onClick={onResetSuccessMessage}>
         </button>
     );
 };

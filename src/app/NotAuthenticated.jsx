@@ -1,3 +1,4 @@
+import React from "react";
 import NavigationLink from "./layout/NavigationLink";
 
 export default () => { return (

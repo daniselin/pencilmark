@@ -8,6 +8,7 @@ import {types as formTypes} from "../../form";
 import {types as tokenTypes} from "../../token";
 import has from "lodash/has";
 import {push} from 'react-router-redux';
+import {forOwn} from "lodash";
 
 export const getFormState = state => state.form;
 export const getTokenState = state => state.token;
@@ -30,6 +31,7 @@ export function* initializeUser(){
             yield put({type: userTypes.LOGIN_USER_SUCCESS});
 
         } catch (error) {
+            yield put({type: userTypes.LOGIN_USER_FAILURE});
             localStorage.clear();
             yield put(push("/login"));
         }
@@ -43,7 +45,8 @@ export function* watchSignUpUser() {
 export function* signupUser() {
     const formState = yield select(getFormState);
     const {values} = formState;
-    const signupForm = inflateForm(values);
+    let signupForm = inflateForm(values);
+    signupForm["score"] = 0;
     try {
         yield put({type: messageTypes.RESET_MESSAGES});
         yield put({type: formTypes.RESET_FIELD_ERRORS});
@@ -75,7 +78,14 @@ export function* signupUser() {
             yield put( { type: tokenTypes.RETRIEVE_TOKENS_FAILURE })
         };
     } catch (error) {
-        console.log(error);
+        let errorMessage = "";
+        forOwn(error.response.data, (value, key) => {
+            errorMessage += key + ": " + value + "\n"
+        });
+        yield put({
+            type: userTypes.LOGIN_USER_FAILURE, error: {message: errorMessage}
+        });
+        yield put( { type: tokenTypes.RETRIEVE_TOKENS_FAILURE });
     };
 };
 
@@ -144,7 +154,9 @@ export function* loginUser(action){
             yield put( { type: tokenTypes.RETRIEVE_TOKENS_FAILURE })
         }
     } catch (error) {
-        console.log(error);
+        yield put({
+            type: userTypes.LOGIN_USER_FAILURE, error: {message: "The username or password provided are not correct"}
+        });
     }
 };
 

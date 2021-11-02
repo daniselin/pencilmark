@@ -17,9 +17,9 @@ import {push} from "react-router-redux";
 import hashids from "../../../config/hashids";
 import {types as modalTypes} from "../../modal";
 
-const getBuildPuzzleState = (state) => state.buildPuzzle;
-const getUserState = (state) => state.user;
-const getFormState = (state) => state.form;
+export const getBuildPuzzleState = (state) => state.buildPuzzle;
+export const getUserState = (state) => state.user;
+export const getFormState = (state) => state.form;
 
 export function* watchChangeValue() {
     yield takeEvery(buildPuzzleTypes.CELL_VALUE_CHANGE, validateCellValueChange);

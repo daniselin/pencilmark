@@ -6,8 +6,12 @@ import {types as buildPuzzleTypes} from "../../build-puzzle";
 import {push} from "react-router-redux";
 import hashids from "../../../config/hashids";
 import {types as modalTypes} from "../../modal";
+import {forEach} from "lodash";
+import {inflateForm} from "../../form/utils";
+import {types as userTypes} from "../../user";
 
 export const getProfileState = state => state.profile;
+export const getUserState = state => state.user;
 
 export function* watchInitializeProfile() {
     yield takeEvery(profileTypes.INITIALIZE_PROFILE, initializeProfile);
@@ -36,13 +40,17 @@ export function* watchSelectSavedPuzzle() {
     yield takeEvery(profileTypes.SELECT_SAVED_PUZZLE, selectSavedPuzzle);
 };
 
-export function* selectSavedPuzzle(action){
-    const {
-        key
-    } = action;
+export function* selectSavedPuzzle(){
+    yield put({type: modalTypes.CREATE_MODAL, id: "saved-puzzle"});
+};
 
+export function* watchResumeSavedPuzzle() {
+    yield takeEvery(profileTypes.RESUME_SAVED_PUZZLE, resumeSavedPuzzle);
+};
+
+export function* resumeSavedPuzzle(){
     const profileState = yield select(getProfileState);
-    let selectedPuzzle = profileState.savedPuzzles[key];
+    let selectedPuzzle = profileState.selectedPuzzle;
     yield put({type: buildPuzzleTypes.LOAD_SAVED_PUZZLE, selectedPuzzle});
     yield put({type: buildPuzzleTypes.SHOULD_LOAD_PUZZLE});
     yield put(push("/puzzle/build"));
@@ -75,10 +83,68 @@ export function* selectCompletedPuzzle(){
     yield put({type: modalTypes.CREATE_MODAL, id: "completed-puzzle"});
 };
 
+export function* watchConfirmDelete() {
+    yield takeEvery(profileTypes.CONFIRM_DELETE, confirmDelete);
+};
+
+export function* confirmDelete(){
+    yield put({type: modalTypes.CREATE_MODAL, id: "delete-confirmation"});
+};
+
+export function* watchDeleteSavedPuzzle() {
+    yield takeEvery(profileTypes.DELETE_SAVED_PUZZLE_REQUEST, deleteSavedPuzzle);
+};
+
+export function* deleteSavedPuzzle(){
+    const profileState = yield select(getProfileState);
+    const selectedPuzzle = profileState.selectedPuzzle;
+    try {
+        yield call(apiAxios.post, api.deletePuzzle(), {id: hashids.decode(selectedPuzzle.id)[0]});
+        yield put({type: profileTypes.DELETE_SAVED_PUZZLE_SUCCESS, successMessage: "Puzzle successfully deleted."})
+        yield put({type: modalTypes.DESTROY_MODAL, id: "delete-confirmation"})
+    }
+    catch (e) {
+        yield put({type: profileTypes.DELETE_SAVED_PUZZLE_FAILURE});
+        yield put({type: modalTypes.DESTROY_MODAL, id: "delete-confirmation"})
+    }
+};
+
+export function* watchFollowUnfollow() {
+    yield takeEvery(profileTypes.FOLLOW_OR_UNFOLLOW, followUnfollow);
+};
+
+export function* followUnfollow(action){
+    const {id} = action;
+    const userState = yield select(getUserState);
+
+    try {
+        const response = yield call(apiAxios.post, api.followOrUnfollow(), {
+            following: id,
+            follower: userState.id
+        });
+        if (response.data.isFollowing) {
+            yield put({type: profileTypes.UNFOLLOW_SUCCESS});
+            yield put({type: userTypes.UNFOLLOW_SUCCESS, following: id});
+        }
+        else {
+            yield put({type: profileTypes.FOLLOW_SUCCESS});
+            yield put({type: userTypes.FOLLOW_SUCCESS, following: id});
+        }
+    }
+    catch (e) {
+        yield put({type: profileTypes.FOLLOW_OR_UNFOLLOW_ERROR, error: {message: "Could not complete the request. Please try again."}});
+        console.log(e)
+    }
+};
+
 export default () => [
     watchInitializeProfile(),
+    watchResumeSavedPuzzle(),
     watchSelectSavedPuzzle(),
     watchSelectCreatedPuzzle(),
     watchSelectCompletedPuzzle(),
-    watchSolvePuzzle()
+    watchSolvePuzzle(),
+    watchDeleteSavedPuzzle(),
+    watchConfirmDelete(),
+    watchFollowUnfollow()
 ];

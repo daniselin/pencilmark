@@ -1,6 +1,6 @@
 import React, {useCallback} from "react";
 import {connect} from "react-redux";
-import {formatDate} from "../../utils";
+import {formatDate, formatRating} from "../../utils";
 import SmallGrid from "../../SmallGrid";
 
 
@@ -34,7 +34,9 @@ const CreatedPuzzle = (props) => {
                 <SmallGrid cells={puzzle["given_digits"]}/>
             </div>
             <div className='card-footer'>
-                {formatDate(puzzle["date"])}
+                <div>Created on {formatDate(puzzle["date"])}</div>
+                <div>Average Rating: {puzzle["average_rating"] !== 11 ? formatRating(puzzle["average_rating"].toString()) + "/10" : "No ratings"}</div>
+                <div>Average Solve Time: {puzzle["average_solve_time"] !== "00:00:00" ? puzzle["average_solve_time"] : "No Solves"}</div>
             </div>
         </div>
     );

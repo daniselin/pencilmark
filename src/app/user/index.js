@@ -1,3 +1,6 @@
+import {types as profileTypes} from "../profile";
+import {filter} from "lodash";
+
 export const types = {
     INITIALIZE_AUTHENTICATION: "user/INITIALIZE_AUTHENTICATION",
     LOGIN_USER_SUCCESS: "user/LOGIN_USER_SUCCESS",
@@ -17,6 +20,9 @@ export const types = {
     SUBMIT_SEARCH_SUCCESS: "user/SUBMIT_SEARCH_SUCCESS",
     SELECT_PROFILE: "user/SELECT_PROFILE",
     RESET_USER_SEARCH: "user/RESET_USER_SEARCH",
+    REMOVE_ERROR_MESSAGE: "user/REMOVE_ERROR_MESSAGE",
+    FOLLOW_SUCCESS: "user/FOLLOW_SUCCESS",
+    UNFOLLOW_SUCCESS: "user/UNFOLLOW_SUCCESS",
 }
 
 export const initialState = {
@@ -29,7 +35,11 @@ export const initialState = {
     userSearchResults: [],
     isSearchLoading: false,
     searchErrorMessage: "",
-    isLoading: false
+    isLoading: false,
+    loginError: false,
+    errorMessage: "",
+    followers: [],
+    following: []
 }
 
 export default (state = initialState, action) => {
@@ -37,7 +47,11 @@ export default (state = initialState, action) => {
         case types.LOGIN_USER_SUCCESS:
             return {...state, hasAuthenticated: true, isLoggingIn: false};
         case types.LOGIN_USER_FAILURE:
-            return {...initialState};
+            return {
+                ...initialState,
+                loginError: true,
+                errorMessage: action.error.message
+            };
         case types.SIGN_IN_USER_REQUEST:
             return {...state, isLoggingIn: true};
         case types.UPDATE_USER_VALUES:
@@ -45,7 +59,9 @@ export default (state = initialState, action) => {
                 username: action.userData.username,
                 email: action.userData.email,
                 score: action.userData.score,
-                id: action.userData.id
+                id: action.userData.id,
+                followers: action.userData.followers,
+                following: action.userData.following
             };
         case types.CLEAR_USER_VALUES:
             return {...initialState};
@@ -82,6 +98,36 @@ export default (state = initialState, action) => {
                 isSearchLoading: false,
                 userSearchResults: []
             };
+        case types.REMOVE_ERROR_MESSAGE:
+            return {
+                ...state,
+                errorMessage: "",
+                loginError: false
+            };
+        case types.FOLLOW_SUCCESS:
+            let newFollowing = [...state.following]
+            newFollowing.push({follower: state.id, following: action.following})
+            return {
+                ...state,
+                following: newFollowing
+            }
+        case types.UNFOLLOW_SUCCESS:
+            console.log(state.following.length)
+            if (state.following.length === 1 ){
+                return {
+                    ...state,
+                    following: []
+                }
+            }
+            else {
+                console.log(state.following, action.following)
+                return {
+                    ...state,
+                    following: filter(state.following, (follower) => {
+                        return follower.following !== action.following
+                    })
+                }
+            }
         default:
             return state;
     }
@@ -106,7 +152,10 @@ export const actions = {
     submitSearch: (query) => {
         return {type: types.SUBMIT_SEARCH, query};
     },
-    selectProfile: (index) => {
-        return {type: types.SELECT_PROFILE, index};
+    selectProfile: (username) => {
+        return {type: types.SELECT_PROFILE, username};
+    },
+    removeErrorMessage: (index) => {
+        return {type: types.REMOVE_ERROR_MESSAGE, index};
     }
 }

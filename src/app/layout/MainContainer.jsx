@@ -55,7 +55,8 @@ const MainContainer = (props) => {
         user,
         title,
         isLoading,
-        actions
+        actions,
+        hasAuthenticated
     } = props;
 
     const {

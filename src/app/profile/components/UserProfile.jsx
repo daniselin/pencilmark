@@ -40,8 +40,8 @@ const UserProfile = (props) => {
 
     const {initializeProfile} = actions;
 
-    const initialize = useCallback((userName) => {
-        initializeProfile(userName);
+    const initialize = useCallback((username) => {
+        initializeProfile(username);
         }, [initializeProfile]
     );
 

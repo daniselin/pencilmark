@@ -35,7 +35,6 @@ const Radio = (props) => {
                         defaultChecked={defaultChecked}
                         checked={isChecked}
                         disabled={disabled}/> {label}
-
                 </label>
             </div>
             :

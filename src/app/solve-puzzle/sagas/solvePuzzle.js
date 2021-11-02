@@ -22,6 +22,7 @@ export function* watchDeleteValue() {
 export function* validateCellValueChangeSolve(){
     yield put({type: solvePuzzleTypes.CELL_VALUE_CHANGE_INITIALIZE})
     const solvePuzzleState = yield select(getSolvePuzzleState);
+    const timerState = yield select(getTimerState);
 
     const {currentDigits} = solvePuzzleState;
 
@@ -30,7 +31,7 @@ export function* validateCellValueChangeSolve(){
             const response = yield call(apiAxios.post, api.checkPuzzle(), {cells: currentDigits});
             const conflictCells = response.data["conflictCells"];
             yield put({type: solvePuzzleTypes.UPDATE_CONFLICT_CELLS, conflictCells});
-            if (solvePuzzleState.currentDigits === solvePuzzleState.loadedPuzzle.solution_digits) {
+            if (solvePuzzleState.currentDigits === solvePuzzleState.loadedPuzzle.solution_digits && timerState.isOn) {
                 yield put({type: timerTypes.STOP_TIMER});
                 yield put({type: modalTypes.CREATE_MODAL, id: "solve-puzzle"});
             }
@@ -76,13 +77,13 @@ export function* completePuzzle(){
     const date = new Date();
 
     const offset = date.getTimezoneOffset();
-    const offsetDate = new Date(date.getTime() - (offset*60*1000));
-    try{
+    const offsetDate = new Date(date.getTime() - (offset * 60 * 1000));
+    try {
         yield call(apiAxios.post, api.completePuzzle(hashids.decode(loadedPuzzle.id)), {
             name: loadedPuzzle.name,
             user: userState.id,
             time: timerState.time,
-            score: 5,
+            score: 10,
             rating: solvePuzzleState.rating,
             date: offsetDate.toISOString().split('T')[0],
             shared: false,
