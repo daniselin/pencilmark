@@ -49,6 +49,10 @@ const mockSelectors = ({selector}, next) => {
     }
 }
 
+beforeEach(() => {
+    window.location.href = `/puzzle/build`;
+});
+
 test("changeCellValue - is triggered", () => {
     return expectSaga(watchChangeValue)
         .withReducer(reducer)
