@@ -50,10 +50,17 @@ export function* initializeSolvePuzzle(action){
         id
     } = action;
 
+    const solvePuzzleState = yield select(getSolvePuzzleState);
+
     let response = yield call(apiAxios.get, api.getPuzzle(hashids.decode(id)));
     response.data.puzzle.id = hashids.encode(response.data.puzzle.id);
     yield put({type: solvePuzzleTypes.INITIALIZE_SOLVE_PUZZLE_SUCCESS, puzzle: response.data});
-    yield put({type: timerTypes.RESET_TIMER});
+
+    if (!solvePuzzleState.savedPuzzle) {
+        yield put({type: timerTypes.RESET_TIMER});
+    } else {
+        yield put({type: timerTypes.START_TIMER});
+    }
 
 };
 
@@ -94,10 +101,45 @@ export function* completePuzzle(){
     }
 };
 
+export function* watchSavePuzzleRequest() {
+    yield takeEvery(solvePuzzleTypes.SAVE_PUZZLE_REQUEST, savePuzzle);
+};
+
+export function* savePuzzle(){
+    const solvePuzzleState = yield select(getSolvePuzzleState);
+    const userState = yield select(getUserState);
+    const timerState = yield select(getTimerState);
+    const loadedPuzzle = solvePuzzleState.loadedPuzzle;
+    const date = new Date();
+
+    const offset = date.getTimezoneOffset();
+    const offsetDate = new Date(date.getTime() - (offset * 60 * 1000));
+
+    try{
+        console.log(hashids.decode(loadedPuzzle.id)[0])
+        const saveResponse = yield call(apiAxios.post, api.savePuzzle(), {
+            user: userState.id,
+            puzzle: hashids.decode(loadedPuzzle.id)[0],
+            digits: solvePuzzleState.currentDigits,
+            cell_colors: solvePuzzleState.cellColors,
+            time: timerState.time,
+            date: offsetDate.toISOString().split('T')[0],
+            corner_digits: solvePuzzleState.cornerDigits,
+            center_digits: solvePuzzleState.centerDigits
+        });
+        yield put({type: solvePuzzleTypes.SAVE_PUZZLE_SUCCESS, successMessage: "Puzzle solution saved."})
+
+    } catch (e) {
+        yield put({type: solvePuzzleTypes.SAVE_PUZZLE_FAILURE, errorMessage: e.message})
+        console.log(e);
+    }
+};
+
 export default () => [
     watchInitializeSolvePuzzle(),
     watchChangeValue(),
     watchDeleteValue(),
     watchViewPuzzle(),
-    watchCompletePuzzleRequest()
+    watchCompletePuzzleRequest(),
+    watchSavePuzzleRequest()
 ];

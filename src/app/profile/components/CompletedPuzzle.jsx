@@ -26,6 +26,8 @@ const CompletedPuzzle = (props) => {
         }
     }, [props]);
 
+    console.log(puzzle)
+
     return(
         <div className='card mb-2 selectable' onClick={(e) => onClick(e)}>
             <div className='card-header'>

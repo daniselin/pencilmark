@@ -27,7 +27,8 @@ const KeyPadCell = (props) => {
         outline,
         color,
         mode,
-        enterMode
+        enterMode,
+        isDisabled
     } = props;
 
 
@@ -148,6 +149,7 @@ const KeyPadCell = (props) => {
             case "digit": {
                 buttonStyle["justifyContent"] = "center"
                 buttonStyle["alignItems"] = "center"
+                buttonStyle["fontSize"] = fontSize * .9;
                 break
             }
             case "centre": {
@@ -182,7 +184,8 @@ const KeyPadCell = (props) => {
             <button
                 className="d-flex btn"
                 onClick={(e) => onClick(e)}
-                style={buttonStyle}>
+                style={buttonStyle}
+                disabled={isDisabled}>
                 {buttonValue}
             </button>
         </div>

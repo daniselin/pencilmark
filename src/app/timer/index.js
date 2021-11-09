@@ -3,6 +3,7 @@ export const types = {
     STOP_TIMER: "timer/STOP_TIMER",
     TICK: "timer/TICK",
     RESET_TIMER: "timer/RESET_TIMER",
+    SET_TIME: "timer/SET_TIME",
 };
 
 export const initialState = {
@@ -34,6 +35,10 @@ export default (state = initialState, action) => {
         case types.RESET_TIMER:
             return {
                 ...initialState
+            };
+        case types.SET_TIME:
+            return {
+                time: action.time
             };
 
         default:

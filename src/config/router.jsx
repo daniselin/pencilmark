@@ -8,6 +8,7 @@ import BuildPuzzle from "../app/build-puzzle/components/BuildPuzzle";
 import UserProfile from "../app/profile/components/UserProfile";
 import SolvePuzzle from "../app/solve-puzzle/components/SolvePuzzle";
 import UserSearch from "../app/user/search/components/UserSearch";
+import PuzzleSearch from "../app/search-puzzle/components/PuzzleSearch";
 
 export default (
     <ConnectedRouter history={history}>
@@ -18,6 +19,7 @@ export default (
                 <Redirect to={"/login/"}/>
             </Route>
             <Route exact path={"/user/search/"} component={UserSearch}/>
+            <Route exact path={"/puzzle/search/"} component={PuzzleSearch}/>
             <Route exact path={"/user/:username"} component={UserProfile}/>
             <Route exact path={"/puzzle/solve/:id"} component={SolvePuzzle}/>
             <Route component={NotFound}/>

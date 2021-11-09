@@ -3,12 +3,14 @@ import {types as profileTypes} from "..";
 import apiAxios from "../../../config/axios";
 import api from "../../../config/api";
 import {types as buildPuzzleTypes} from "../../build-puzzle";
+import {types as solvePuzzleTypes} from "../../solve-puzzle";
 import {push} from "react-router-redux";
 import hashids from "../../../config/hashids";
 import {types as modalTypes} from "../../modal";
 import {forEach} from "lodash";
 import {inflateForm} from "../../form/utils";
 import {types as userTypes} from "../../user";
+import {types as timerTypes} from "../../timer";
 
 export const getProfileState = state => state.profile;
 export const getUserState = state => state.user;
@@ -137,6 +139,44 @@ export function* followUnfollow(action){
     }
 };
 
+export function* watchSelectSavedSolution() {
+    yield takeEvery(profileTypes.SELECT_SAVED_SOLUTION, selectSavedSolution);
+};
+
+export function* selectSavedSolution(){
+    yield put({type: modalTypes.CREATE_MODAL, id: "saved-solution"});
+};
+
+export function* watchResumeSavedSolution() {
+    yield takeEvery(profileTypes.RESUME_SAVED_SOLUTION, resumeSavedSolution);
+};
+
+export function* resumeSavedSolution(){
+    const profileState = yield select(getProfileState);
+    let selectedPuzzle = profileState.selectedPuzzle;
+    yield put({type: solvePuzzleTypes.LOAD_SAVED_SOLUTION, selectedPuzzle});
+    yield put({type: timerTypes.SET_TIME, time: selectedPuzzle.time});
+    yield put(push("/puzzle/solve/" + hashids.encode(selectedPuzzle.saved_solution.id)));
+};
+
+export function* watchDeleteSavedSolution() {
+    yield takeEvery(profileTypes.DELETE_SAVED_SOLUTION_REQUEST, deleteSavedSolution);
+};
+
+export function* deleteSavedSolution(){
+    const profileState = yield select(getProfileState);
+    const selectedPuzzle = profileState.selectedPuzzle;
+    try {
+        yield call(apiAxios.post, api.deleteSolution(), {id: selectedPuzzle.id});
+        yield put({type: profileTypes.DELETE_SAVED_SOLUTION_SUCCESS, id: selectedPuzzle.id, successMessage: "Solution successfully deleted."})
+        yield put({type: modalTypes.DESTROY_MODAL, id: "delete-confirmation"})
+    }
+    catch (e) {
+        yield put({type: profileTypes.DELETE_SAVED_SOLUTION_FAILURE});
+        yield put({type: modalTypes.DESTROY_MODAL, id: "delete-confirmation"})
+    }
+};
+
 export default () => [
     watchInitializeProfile(),
     watchResumeSavedPuzzle(),
@@ -146,5 +186,8 @@ export default () => [
     watchSolvePuzzle(),
     watchDeleteSavedPuzzle(),
     watchConfirmDelete(),
-    watchFollowUnfollow()
+    watchFollowUnfollow(),
+    watchSelectSavedSolution(),
+    watchResumeSavedSolution(),
+    watchDeleteSavedSolution()
 ];

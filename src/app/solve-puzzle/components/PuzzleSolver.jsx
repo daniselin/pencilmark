@@ -10,6 +10,8 @@ import {formatTime} from "../../utils";
 import RatePuzzle from "./RatePuzzle";
 import NotAuthenticated from "../../NotAuthenticated";
 import {actions as solvePuzzleActions} from "../index";
+import SuccessMessage from "../../messages/components/SuccessMessage";
+import ErrorMessage from "../../messages/components/ErrorMessage";
 
 
 const mapStateToProps = (state) => {
@@ -85,6 +87,9 @@ const PuzzleSolver = (props) => {
                         </div>
                         <div className={width > 970 ? 'col-5' : 'col-12'}>
                             <KeyPad rotateEnterMode={rotateEnterMode}/>
+                            <br/>
+                            <SuccessMessage/>
+                            <ErrorMessage/>
                         </div>
                     </div>
                 </>

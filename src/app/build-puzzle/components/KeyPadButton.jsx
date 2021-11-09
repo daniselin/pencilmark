@@ -44,7 +44,7 @@ const KeyPadCell = (props) => {
     }
 
     return(
-        <div className='p-2' style={{height: "90%"}}>
+        <div className='d-flex p-1' style={{height: "90%"}}>
             <button
                 draggable="true"
                 className="btn"

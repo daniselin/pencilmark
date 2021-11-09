@@ -13,6 +13,7 @@ import {
 export const types = {
     INITIALIZE_SOLVE_PUZZLE: "solve-puzzle/INITIALIZE_SOLVE_PUZZLE",
     INITIALIZE_SOLVE_PUZZLE_SUCCESS: "solve-puzzle/INITIALIZE_SOLVE_PUZZLE_SUCCESS",
+
     CELL_CLICK: "solve-puzzle/CELL_CLICK",
     CONTROL_CELL_CLICK: "solve-puzzle/CONTROL_CELL_CLICK",
     CELL_DRAG: "solve-puzzle/CELL_DRAG",
@@ -29,6 +30,12 @@ export const types = {
     COMPLETE_PUZZLE_REQUEST: "solve-puzzle/COMPLETE_PUZZLE_REQUEST",
     CHANGE_ENTER_MODE: "solve-puzzle/CHANGE_ENTER_MODE",
     ROTATE_ENTER_MODE: "solve-puzzle/ROTATE_ENTER_MODE",
+
+    SAVE_PUZZLE_REQUEST: "solve-puzzle/SAVE_PUZZLE_REQUEST",
+    SAVE_PUZZLE_SUCCESS: "solve-puzzle/SAVE_PUZZLE_SUCCESS",
+    SAVE_PUZZLE_FAILURE: "solve-puzzle/SAVE_PUZZLE_FAILURE",
+
+    LOAD_SAVED_SOLUTION: "solve-puzzle/LOAD_SAVED_SOLUTION",
 };
 
 export const initialState = {
@@ -1866,7 +1873,9 @@ export const initialState = {
         given_digits: '_________________________________________________________________________________'
     },
     rating: 0,
-    enterMode: "digit"
+    enterMode: "digit",
+    isSaving: false,
+    savedPuzzle: false
 };
 
 export default (state = initialState, action) => {
@@ -1877,1838 +1886,1864 @@ export default (state = initialState, action) => {
                 isLoading: true
             }
         case types.INITIALIZE_SOLVE_PUZZLE_SUCCESS:
-            return {
-                ...state,
-                isLoading: false,
-                currentDigits: action.puzzle.puzzle.given_digits,
-                selectedCell: {
-                    box: 10,
-                    cell: 10,
-                    row: 10,
-                    col: 10
-                },
-                selectedCells: [],
-                conflictCells: [],
-                cellColors: initialState.cellColors,
-                centerDigits:  {
-                    1: {
-                        1: {1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false},
+            if (state.savedPuzzle) {
+                return {
+                    ...state,
+                    isLoading: false,
+                    currentDigits: state.savedPuzzle.currentDigits,
+                    selectedCell: {
+                        box: 10,
+                        cell: 10,
+                        row: 10,
+                        col: 10
+                    },
+                    selectedCells: [],
+                    conflictCells: [],
+                    cellColors: state.savedPuzzle.cellColors,
+                    loadedPuzzle: action.puzzle.puzzle,
+                    centerDigits: state.savedPuzzle.centerDigits,
+                    cornerDigits: state.savedPuzzle.cornerDigits,
+                    savedPuzzle: false
+                }
+            }
+            else {
+                return {
+                    ...state,
+                    isLoading: false,
+                    currentDigits: action.puzzle.puzzle.given_digits,
+                    selectedCell: {
+                        box: 10,
+                        cell: 10,
+                        row: 10,
+                        col: 10
+                    },
+                    selectedCells: [],
+                    conflictCells: [],
+                    cellColors: initialState.cellColors,
+                    centerDigits: {
+                        1: {
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
+                        },
                         2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         }
                     },
-                    2: {
+                    cornerDigits: {
                         1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         },
                         9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
+                            1: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            2: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            3: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            4: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            5: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            6: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            7: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            8: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            },
+                            9: {
+                                1: false,
+                                2: false,
+                                3: false,
+                                4: false,
+                                5: false,
+                                6: false,
+                                7: false,
+                                8: false,
+                                9: false
+                            }
                         }
                     },
-                    3: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    4: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    5: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    6: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    7: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    8: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    9: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    }
-                },
-                cornerDigits:  {
-                    1: {
-                        1: {1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false},
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    2: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    3: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    4: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    5: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    6: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    7: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    8: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    },
-                    9: {
-                        1: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        2: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        3: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        4: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        5: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        6: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        7: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        8: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        },
-                        9: {
-                            1: false,
-                            2: false,
-                            3: false,
-                            4: false,
-                            5: false,
-                            6: false,
-                            7: false,
-                            8: false,
-                            9: false
-                        }
-                    }
-                },
-                loadedPuzzle: action.puzzle.puzzle
+                    loadedPuzzle: action.puzzle.puzzle
+                }
             }
         case types.CELL_CLICK: {
             const {box, cell, row, col} = action;
@@ -4094,7 +4129,9 @@ export default (state = initialState, action) => {
             else {
                 if (isSelectionAllDigits(selectedCells, cells)) {
                     forEach(selectedCells, (cell) => {
-                        cells[index(cell.col, cell.row)] = "_";
+                        if (loadedPuzzle["given_digits"].charAt(index(cell.col, cell.row)) === "_") {
+                            cells[index(cell.col, cell.row)] = "_";
+                        }
                     });
                     return {
                         ...state,
@@ -4264,6 +4301,35 @@ export default (state = initialState, action) => {
                 }
             }
         }
+        case types.SAVE_PUZZLE_REQUEST: {
+            return {
+                ...state,
+                isSaving: true
+            }
+        }
+        case types.SAVE_PUZZLE_FAILURE: {
+            return {
+                ...state,
+                isSaving: false
+            }
+        }
+        case types.SAVE_PUZZLE_SUCCESS: {
+            return {
+                ...state,
+                isSaving: false
+            }
+        }
+        case types.LOAD_SAVED_SOLUTION: {
+            return {
+                ...state,
+                savedPuzzle: {
+                    currentDigits: action.selectedPuzzle.digits,
+                    cellColors: action.selectedPuzzle.cell_colors,
+                    cornerDigits: action.selectedPuzzle.corner_digits,
+                    centerDigits: action.selectedPuzzle.center_digits
+                }
+            }
+        }
         default:
             return state
     }
@@ -4314,6 +4380,9 @@ export const actions = {
     },
     rotateEnterMode: () => {
         return {type: types.ROTATE_ENTER_MODE}
+    },
+    savePuzzle: () => {
+        return {type: types.SAVE_PUZZLE_REQUEST}
     }
 }
 

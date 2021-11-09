@@ -10,7 +10,7 @@ import {index} from "../../utils";
 const mapStateToProps = (state) => {
     return {
         ...pick(state.windowSize, ["height", "width"]),
-        ...pick(state.solvePuzzle, ["loadedPuzzle"])
+        ...pick(state.solvePuzzle, ["loadedPuzzle", "isSaving"])
     };
 };
 
@@ -18,20 +18,23 @@ const mapDispatchToProps = (dispatch) => {
     return {actions: bindActionCreators({
             changeCellValue: solvePuzzleActions.changeCellValue,
             deleteCellValue: solvePuzzleActions.deleteCellValue,
-            changeEnterMode: solvePuzzleActions.changeEnterMode
+            changeEnterMode: solvePuzzleActions.changeEnterMode,
+            savePuzzle: solvePuzzleActions.savePuzzle
         }, dispatch)};
 };
 
 const KeyPad = (props) => {
     const {
         width,
+        isSaving,
         actions
     } = props;
 
     const {
         changeCellValue,
         deleteCellValue,
-        changeEnterMode
+        changeEnterMode,
+        savePuzzle
     } = actions;
 
     const keyPadStyle = {
@@ -183,6 +186,17 @@ const KeyPad = (props) => {
                             e.stopPropagation();
                         }
                         }/>
+                    </td>
+                </tr>
+                <tr style={{height: "25%"}}>
+                    <td colSpan={3}>
+                        <KeyPadButton outline="purple" color="white" value={isSaving ? "Saving..." : "Save"} width={(width * .2)} onClick={(e) =>
+                        {
+                            savePuzzle();
+                            e.stopPropagation();
+                        }
+                        }
+                        isDisabled={isSaving}/>
                     </td>
                 </tr>
             </tbody>

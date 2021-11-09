@@ -5,6 +5,8 @@ export const types = {
     INITIALIZE_PROFILE_SUCCESS: "profile/INITIALIZE_PROFILE_SUCCESS",
     SELECT_SAVED_PUZZLE: "profile/SELECT_SAVED_PUZZLE",
     RESUME_SAVED_PUZZLE: "profile/RESUME_SAVED_PUZZLE",
+    SELECT_SAVED_SOLUTION: "profile/SELECT_SAVED_SOLUTION",
+    RESUME_SAVED_SOLUTION: "profile/RESUME_SAVED_SOLUTION",
     SELECT_CREATED_PUZZLE: "profile/SELECT_CREATED_PUZZLE",
     SELECT_COMPLETED_PUZZLE: "profile/SELECT_COMPLETED_PUZZLE",
     SOLVE_PUZZLE: "profile/SOLVE_PUZZLE",
@@ -16,6 +18,10 @@ export const types = {
     DELETE_CREATED_PUZZLE_REQUEST: "profile/DELETE_CREATED_PUZZLE_REQUEST",
     DELETE_CREATED_PUZZLE_FAILURE: "profile/DELETE_CREATED_PUZZLE_FAILURE",
     DELETE_CREATED_PUZZLE_SUCCESS: "profile/DELETE_CREATED_PUZZLE_SUCCESS",
+
+    DELETE_SAVED_SOLUTION_REQUEST: "profile/DELETE_SAVED_SOLUTION_REQUEST",
+    DELETE_SAVED_SOLUTION_FAILURE: "profile/DELETE_SAVED_SOLUTION_FAILURE",
+    DELETE_SAVED_SOLUTION_SUCCESS: "profile/DELETE_SAVED_SOLUTION_SUCCESS",
 
     CONFIRM_DELETE: "profile/CONFIRM_DELETE",
 
@@ -29,6 +35,7 @@ export const initialState = {
     createdPuzzles: [],
     savedPuzzles: [],
     completedPuzzles: [],
+    savedSolutions: [],
     selectedPuzzle: {},
     profile: 0,
     isFollowing: false,
@@ -49,6 +56,7 @@ export default (state = initialState, action) => {
                 createdPuzzles: action.response.createdPuzzles,
                 savedPuzzles: action.response.savedPuzzles,
                 completedPuzzles: action.response.completedPuzzles,
+                savedSolutions: action.response.savedSolutions,
                 profile: action.response.profile,
                 isFollowing: action.response.isFollowing,
                 isLoading: false
@@ -68,6 +76,11 @@ export default (state = initialState, action) => {
                 ...state,
                 selectedPuzzle: state.savedPuzzles[action.key]
             }
+        case types.SELECT_SAVED_SOLUTION:
+            return {
+                ...state,
+                selectedPuzzle: state.savedSolutions[action.key]
+            }
         case types.DELETE_SAVED_PUZZLE_SUCCESS:
             const updatedSavedPuzzles = filter(state.savedPuzzles, (puzzle) => {
                 return puzzle.name !== state.selectedPuzzle.name
@@ -76,25 +89,25 @@ export default (state = initialState, action) => {
                 ...state,
                 savedPuzzles: updatedSavedPuzzles
             }
+        case types.DELETE_SAVED_SOLUTION_SUCCESS:
+            const updatedSavedSolutions = filter(state.savedSolutions, (puzzle) => {
+                return puzzle.id !== action.id
+            })
+            return {
+                ...state,
+                savedSolutions: updatedSavedSolutions
+            }
         case types.UNFOLLOW_SUCCESS:
             return {
                 ...state,
                 isFollowing: false,
-                isFollowActionLoading: false,
-                // profile: {
-                //     ...state.profile,
-                //     followers: state.profile.followers - 1
-                // }
+                isFollowActionLoading: false
             }
         case types.FOLLOW_SUCCESS:
             return {
                 ...state,
                 isFollowing: true,
-                isFollowActionLoading: false,
-                // profile: {
-                //     ...state.profile,
-                //     followers: state.profile.followers + 1
-                // }
+                isFollowActionLoading: false
             }
         case types.FOLLOW_OR_UNFOLLOW:
             return {
@@ -113,8 +126,14 @@ export const actions = {
     selectSavedPuzzle: (key) => {
         return {type: types.SELECT_SAVED_PUZZLE, key}
     },
+    selectSavedSolution: (key) => {
+        return {type: types.SELECT_SAVED_SOLUTION, key}
+    },
     resumeSavedPuzzle: () => {
         return {type: types.RESUME_SAVED_PUZZLE}
+    },
+    resumeSavedSolution: () => {
+        return {type: types.RESUME_SAVED_SOLUTION}
     },
     selectCreatedPuzzle: (key) => {
         return {type: types.SELECT_CREATED_PUZZLE, key}
@@ -127,6 +146,9 @@ export const actions = {
     },
     deleteSavedPuzzle: () => {
         return {type: types.DELETE_SAVED_PUZZLE_REQUEST}
+    },
+    deleteSavedSolution: () => {
+        return {type: types.DELETE_SAVED_SOLUTION_REQUEST}
     },
     deleteCreatedPuzzle: () => {
         return {type: types.DELETE_CREATED_PUZZLE_REQUEST}

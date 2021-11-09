@@ -6,6 +6,7 @@ import {pick} from "lodash";
 import CompletedPuzzles from "./CompletedPuzzles";
 import Followers from "./Followers";
 import Following from "./Following";
+import SavedSolutions from "./SavedSolutions";
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -29,6 +30,7 @@ const ProfileMainContent = (props) => {
         savedPuzzles,
         createdPuzzles,
         completedPuzzles,
+        savedSolutions,
         following,
         followers,
         width,
@@ -77,6 +79,14 @@ const ProfileMainContent = (props) => {
                                 Following
                             </button>
                         </li>
+                        {profile.id === id &&
+                        <li className='nav-item m-2'>
+                            <button id="savedSolutions" className='btn btn-outline-primary'
+                                    onClick={(e) => onClick(e)}>
+                                Saved Solutions
+                            </button>
+                        </li>
+                        }
                     </ul>
                 </nav>
                 <>
@@ -94,6 +104,9 @@ const ProfileMainContent = (props) => {
                     }
                     {section === "following" &&
                     <Following username={profile.username} width={width} profileFollowing={following}/>
+                    }
+                    {section === "savedSolutions" &&
+                    <SavedSolutions username={profile.username} width={width} savedSolutions={savedSolutions}/>
                     }
                 </>
             </>

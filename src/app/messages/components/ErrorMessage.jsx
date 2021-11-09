@@ -10,6 +10,10 @@ const ErrorMessage = (props) => {
         }
     }, [props]);
 
+    if (!errorMessage) {
+        return false
+    };
+
     return (
         <div className="alert alert-danger alert-icon" role="alert">
             <div className="row">

@@ -15,6 +15,7 @@ const mapStateToProps = (state, ownProps) => {
             "createdPuzzles",
             "savedPuzzles",
             "completedPuzzles",
+            "savedSolutions",
             "isFollowActionLoading",
             "isFollowing"
         ]),
@@ -39,6 +40,7 @@ const Profile = (props) => {
         savedPuzzles,
         createdPuzzles,
         completedPuzzles,
+        savedSolutions,
         hasAuthenticated,
         isFollowing,
         isFollowActionLoading,
@@ -86,6 +88,7 @@ const Profile = (props) => {
                         savedPuzzles={savedPuzzles}
                         createdPuzzles={createdPuzzles}
                         completedPuzzles={completedPuzzles}
+                        savedSolutions={savedSolutions}
                         following={profile.following}
                         followers={profile.followers}
                     />

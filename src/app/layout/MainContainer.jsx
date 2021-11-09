@@ -16,6 +16,7 @@ import Profile from "../profile/components/Profile";
 import PuzzleSolver from "../solve-puzzle/components/PuzzleSolver";
 import Loading from "./Loading";
 import UserSearchResults from "../user/search/components/UserSearchResults";
+import PuzzleSearchResults from "../search-puzzle/components/PuzzleSearchResults";
 
 const mapStateToProps = (state) => {
     return {
@@ -94,8 +95,9 @@ const MainContainer = (props) => {
                                                 active={section === "profile"}/>
                                 <NavigationLink title="Build Puzzle" link="/puzzle/build"
                                                 active={section === "build-puzzle"}/>
-                                <NavigationLink link="/login/" title="Logout" onClick={() => logoutUser()}/>
                                 <NavigationLink link="/user/search/" title="Search Users"/>
+                                <NavigationLink link="/puzzle/search/" title="Search Puzzles"/>
+                                <NavigationLink link="/login/" title="Logout" onClick={() => logoutUser()}/>
                             </>
                             :
                             <>
@@ -135,6 +137,14 @@ const MainContainer = (props) => {
                             <br/>
                         </>
                         }
+                        {section === "puzzle-search" &&
+                        <>
+                            <PuzzleSearchResults
+                            />
+                            <br/>
+                            <br/>
+                        </>
+                        }
                         {section === "login" &&
                         <Login/>
                         }
@@ -146,7 +156,7 @@ const MainContainer = (props) => {
 };
 
 MainContainer.propTypes = {
-    section: PropTypes.oneOf(["notFound","profile", "build-puzzle", "login", "solve-puzzle", "user-search"]).isRequired,
+    section: PropTypes.oneOf(["notFound","profile", "build-puzzle", "login", "solve-puzzle", "user-search", "puzzle-search"]).isRequired,
     secondarySection: PropTypes.string,
     title: PropTypes.oneOfType([
         PropTypes.string,

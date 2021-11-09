@@ -3,6 +3,7 @@ import {connectRouter} from "connected-react-router";
 import user from '../app/user';
 import buildPuzzle from '../app/build-puzzle';
 import solvePuzzle from '../app/solve-puzzle';
+import searchPuzzle from '../app/search-puzzle';
 import token from '../app/token';
 import messages from '../app/messages';
 import form from '../app/form';
@@ -22,6 +23,7 @@ const createRootReducer = (history) => combineReducers({
   solvePuzzle,
   modal,
   timer,
+  searchPuzzle,
   [REDUCER_KEY]: windowSize,
 })
 
