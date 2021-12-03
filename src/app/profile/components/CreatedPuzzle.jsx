@@ -28,7 +28,7 @@ const CreatedPuzzle = (props) => {
     return(
         <div className='card justify-content-center mb-4 selectable' onClick={(e) => onClick(e)}>
             <div className='card-header'>
-                {puzzle["name"]}
+                {puzzle["name"]} by {puzzle["creator_username"]}
             </div>
             <div className='containter-fluid card-body justify-content-center'>
                 <SmallGrid cells={puzzle["given_digits"]}/>

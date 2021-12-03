@@ -26,18 +26,17 @@ const CompletedPuzzle = (props) => {
         }
     }, [props]);
 
-    console.log(puzzle)
-
     return(
         <div className='card mb-2 selectable' onClick={(e) => onClick(e)}>
             <div className='card-header'>
-                {puzzle["name"]}
+                {puzzle["name"]} by {puzzle["creator_username"]}
             </div>
             <div className='card-body'>
                 <SmallGrid cells={puzzle["given_digits"]}/>
             </div>
             <div className='card-footer'>
-                {formatDate(puzzle["date"])} {formatTime(puzzle["time"])} {puzzle["average_rating"]}
+                <div>{formatDate(puzzle["date"])} {formatTime(puzzle["time"])}</div>
+                <div>Points: {puzzle["score"]}</div>
             </div>
         </div>
     );

@@ -7,8 +7,6 @@ import {types as solvePuzzleTypes} from "../../solve-puzzle";
 import {push} from "react-router-redux";
 import hashids from "../../../config/hashids";
 import {types as modalTypes} from "../../modal";
-import {forEach} from "lodash";
-import {inflateForm} from "../../form/utils";
 import {types as userTypes} from "../../user";
 import {types as timerTypes} from "../../timer";
 
@@ -55,7 +53,7 @@ export function* resumeSavedPuzzle(){
     let selectedPuzzle = profileState.selectedPuzzle;
     yield put({type: buildPuzzleTypes.LOAD_SAVED_PUZZLE, selectedPuzzle});
     yield put({type: buildPuzzleTypes.SHOULD_LOAD_PUZZLE});
-    yield put(push("/puzzle/build"));
+    yield put(push("/puzzle/build/"));
 };
 
 export function* watchSolvePuzzle() {
@@ -64,7 +62,7 @@ export function* watchSolvePuzzle() {
 
 export function* solvePuzzle(){
     const profileState = yield select(getProfileState);
-    const selectedPuzzle = profileState.selectedPuzzle;
+    const {selectedPuzzle} = profileState;
     yield put({type: modalTypes.DESTROY_MODAL, id: "created-puzzle"})
     yield put(push("/puzzle/solve/" + selectedPuzzle.id + "/"));
 };
@@ -177,6 +175,25 @@ export function* deleteSavedSolution(){
     }
 };
 
+export function* watchViewLeaderboard() {
+    yield takeEvery(profileTypes.VIEW_LEADERBOARD, viewLeaderboard);
+};
+
+export function* viewLeaderboard(){
+    const profileState = yield select(getProfileState);
+    const selectedPuzzle = profileState.selectedPuzzle;
+    try {
+        const response = yield call(apiAxios.get, api.getPuzzle(selectedPuzzle.puzzle));
+        yield put({type: profileTypes.VIEW_LEADERBOARD_SUCCESS, leaderboard: response.data.leaderboard})
+        yield put({type: modalTypes.DESTROY_MODAL, id: "completed-puzzle"})
+        yield put({type: modalTypes.CREATE_MODAL, id: "completed-puzzle-leaderboard"})
+    }
+    catch (e) {
+        yield put({type: profileTypes.DELETE_SAVED_SOLUTION_FAILURE});
+        yield put({type: modalTypes.DESTROY_MODAL, id: "delete-confirmation"})
+    }
+};
+
 export default () => [
     watchInitializeProfile(),
     watchResumeSavedPuzzle(),
@@ -189,5 +206,6 @@ export default () => [
     watchFollowUnfollow(),
     watchSelectSavedSolution(),
     watchResumeSavedSolution(),
-    watchDeleteSavedSolution()
+    watchDeleteSavedSolution(),
+    watchViewLeaderboard()
 ];

@@ -15,7 +15,15 @@ export const types = {
     CONTROL_CELL_DRAG: "build-puzzle/CONTROL_CELL_DRAG",
     INITIALIZE_CONTROL_CELL_DRAG: "build-puzzle/INITIALIZE_CONTROL_CELL_DRAG",
     INITIALIZE_CELL_DRAG: "build-puzzle/INITIALIZE_CELL_DRAG",
+
     CELL_VALUE_CHANGE: "build-puzzle/CELL_VALUE_CHANGE",
+    CELL_VALUE_CHANGE_SINGLE_CELL: "build-puzzle/CELL_VALUE_CHANGE_SINGLE_CELL",
+    CELL_VALUE_CHANGE_VALUES: "build-puzzle/CELL_VALUE_CHANGE_VALUES",
+    ADD_SELECTED_CELL: "build-puzzle/ADD_SELECTED_CELL",
+    REMOVE_SELECTED_CELL: "build-puzzle/REMOVE_SELECTED_CELL",
+    ADDING_CELLS_TRUE: "build-puzzle/ADDING_CELLS_TRUE",
+    ADDING_CELLS_FALSE: "build-puzzle/ADDING_CELLS_FALSE",
+
     CELL_VALUE_CHANGE_INITIALIZE: "build-puzzle/CELL_VALUE_CHANGE_INITIALIZE",
     CELL_VALUE_DELETE: "build-puzzle/CELL_VALUE_DELETE",
     FOCUS_OFF_CELLS: "build-puzzle/FOCUS_OFF_CELLS",
@@ -27,17 +35,12 @@ export const types = {
     START_NEW_PUZZLE: "build-puzzle/START_NEW_PUZZLE",
     SHOULD_LOAD_PUZZLE: "build-puzzle/SHOULD_LOAD_PUZZLE",
     SHOULD_NOT_LOAD_PUZZLE: "build-puzzle/SHOULD_NOT_LOAD_PUZZLE",
-    REBUILD_PUZZLE: "build-puzzle/REBUILD_PUZZLE"
+    REBUILD_PUZZLE: "build-puzzle/REBUILD_PUZZLE",
+    RESET_FOCUS: "build-puzzle/RESET_FOCUS",
 };
 
 export const initialState = {
     cells: '_________________________________________________________________________________',
-    selectedCell: {
-        box: 10,
-        cell: 10,
-        row: 10,
-        col: 10
-    },
     selectedCells: [],
     addingCells: true,
     conflictCells: [],
@@ -64,183 +67,75 @@ export default (state = initialState, action) => {
                 isLoading: true
             }
         case types.SET_LOADED_PUZZLE:
-            if (state.loadedPuzzle.given_digits && state.shouldLoadPuzzle) {
-                return {
-                    ...state,
-                    cells: state.loadedPuzzle.given_digits,
-                    selectedCell: {
-                        box: 10,
-                        cell: 10,
-                        row: 10,
-                        col: 10
-                    },
-                    selectedCells: [],
-                    conflictCells: []
-                }
+            return {
+                ...state,
+                cells: state.loadedPuzzle.given_digits,
+                selectedCells: [],
+                conflictCells: []
             }
-            else {
-                return {...state,
-                    selectedCell: {
-                        box: 10,
-                        cell: 10,
-                        row: 10,
-                        col: 10
-                    },
-                    selectedCells: [],
-                    conflictCells: []}
-            }
+        case types.RESET_FOCUS:
+            return {...state,
+                selectedCells: [],
+                conflictCells: []}
         case types.CELL_CLICK: {
             const {box, cell, row, col} = action;
             return {
                 ...state,
-                selectedCell: {
-                    box: box,
-                    cell: cell,
-                    row: row,
-                    col: col
-                },
-                selectedCells: []
+                selectedCells: [{box: box, cell: cell, row: row, col: col}]
             };
         }
-        case types.CONTROL_CELL_CLICK: {
+        case types.ADD_SELECTED_CELL: {
             const clickedCell = {
-                box: action.box,
-                cell: action.cell,
-                row: action.row,
-                col: action.col
+                box: action.selectedCell.box,
+                cell: action.selectedCell.cell,
+                row: action.selectedCell.row,
+                col: action.selectedCell.col
             };
-            if (state.selectedCell.box === 10) {
-                if (!some(state.selectedCells, clickedCell)) {
-                    return {
-                        ...state,
-                        selectedCells: [...state.selectedCells, clickedCell],
-                        selectedCell: initialState.selectedCell
-                    }
-                } else {
-                    const newSelectedCells = state.selectedCells.filter((aCell) => {
-                        return (aCell.row !== clickedCell.row || aCell.col !== clickedCell.col)
-                    });
-                    return {
-                        ...state,
-                        selectedCells: newSelectedCells,
-                        selectedCell: initialState.selectedCell
-                    }
-                }
-                ;
-            }
-            else {
-                return {
-                    ...state,
-                    selectedCells: [{
-                        cell: clickedCell.cell,
-                        box: clickedCell.box,
-                        row: clickedCell.row,
-                        col: clickedCell.col
-                    }, {
-                        cell: state.selectedCell.cell,
-                        box: state.selectedCell.box,
-                        row: state.selectedCell.row,
-                        col: state.selectedCell.col,
-                    }],
-                    selectedCell: initialState.selectedCell
-                }
+            return {
+                ...state,
+                selectedCells: [...state.selectedCells, clickedCell],
             }
         }
-        case types.CELL_DRAG:
-            const drugCell = {
-                box: action.box,
-                cell: action.cell,
-                row: action.row,
-                col: action.col
+        case types.REMOVE_SELECTED_CELL: {
+            const clickedCell = {
+                box: action.selectedCell.box,
+                cell: action.selectedCell.cell,
+                row: action.selectedCell.row,
+                col: action.selectedCell.col
             };
-            if (!some(state.selectedCells, drugCell)) {
-                return {
-                    ...state,
-                    selectedCells: [...state.selectedCells, drugCell]
-                }
-            } else {
-                return {...state}
-            };
-        case types.CONTROL_CELL_DRAG: {
-            const drugCell = {
-                box: action.box,
-                cell: action.cell,
-                row: action.row,
-                col: action.col
-            };
-            if (some(state.selectedCells, drugCell) && !state.addingCells) {
-                const newSelectedCells = state.selectedCells.filter((aCell) => {
-                    return (aCell.row !== drugCell.row || aCell.col !== drugCell.col)
-                });
-                return {
-                    ...state,
-                    selectedCells: newSelectedCells,
-                }
-            } else if (!some(state.selectedCells, drugCell) && state.addingCells) {
-                return {
-                    ...state,
-                    selectedCells: [...state.selectedCells, drugCell]
-                }
+            const newSelectedCells = state.selectedCells.filter((aCell) => {
+                return (aCell.row !== clickedCell.row || aCell.col !== clickedCell.col)
+            });
+            return {
+                ...state,
+                selectedCells: newSelectedCells,
             }
-            return {...state};
-            ;
         }
         case types.INITIALIZE_CELL_DRAG:
             return {
                 ...state,
-                selectedCell: {
-                    box: 10,
-                    cell: 10,
-                    row: 10,
-                    col: 10
-                },
                 selectedCells: []
             }
-        case types.INITIALIZE_CONTROL_CELL_DRAG: {
-            const drugCell = {
-                box: action.box,
-                cell: action.cell,
-                row: action.row,
-                col: action.col
-            }
-            if (drugCell.row === state.selectedCell.row && drugCell.col === state.selectedCell.row) {
-                return {
-                    ...state,
-                    selectedCell: {
-                        box: 10,
-                        cell: 10,
-                        row: 10,
-                        col: 10
-                    }
-                }
-            }
-            if (!some(state.selectedCells, drugCell)) {
-                return {
-                    ...state,
-                    addingCells: true
-                }
-            } else {
-                return {
-                    ...state,
-                    addingCells: false
-                }
+        case types.ADDING_CELLS_TRUE: {
+            return {
+                ...state,
+                addingCells: true
             }
         }
-        case types.CELL_VALUE_CHANGE: {
-            const selectedCell = {...state.selectedCell};
+        case types.ADDING_CELLS_FALSE: {
+            return {
+                ...state,
+                addingCells: false
+            }
+        }
+        case types.CELL_VALUE_CHANGE_VALUES: {
             const selectedCells = [...state.selectedCells];
             const cells = {...state.cells};
             const newValue = action.newValue;
-            if (selectedCell.row !== 10) {
-                const selectedCellIndex = (selectedCell.col - 1) * 9 + (selectedCell.row - 1);
+            forEach(selectedCells, (cell) => {
+                const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
                 cells[selectedCellIndex] = newValue;
-            } else {
-                forEach(selectedCells, (cell) => {
-                    const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
-                    cells[selectedCellIndex] = newValue;
-                });
-            }
-            ;
+            });
 
             return {
                 ...state,
@@ -248,20 +143,13 @@ export default (state = initialState, action) => {
             }
         }
         case types.CELL_VALUE_DELETE: {
-            const selectedCell = {...state.selectedCell};
             const selectedCells = [...state.selectedCells];
             const cells = {...state.cells};
 
-            if (selectedCell.row !== 10) {
-                const selectedCellIndex = (selectedCell.col - 1) * 9 + (selectedCell.row - 1);
+            forEach(selectedCells, (cell) => {
+                const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
                 cells[selectedCellIndex] = "_";
-            } else {
-                forEach(selectedCells, (cell) => {
-                    const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
-                    cells[selectedCellIndex] = "_";
-                });
-            }
-            ;
+            });
 
             return {
                 ...state,
@@ -271,7 +159,6 @@ export default (state = initialState, action) => {
         case types.FOCUS_OFF_CELLS:
             return {
                 ...state,
-                selectedCell: initialState.selectedCell,
                 selectedCells: []
             }
         case types.CELL_VALUE_CHANGE_INITIALIZE:
@@ -369,14 +256,6 @@ export const actions = {
     rebuildPuzzle: () => {
         return {type: types.REBUILD_PUZZLE}
     }
-}
-
-String.prototype.replaceAt = function(index, replacement) {
-    if (index >= this.length) {
-        return this.valueOf();
-    }
-
-    return this.substring(0, index) + replacement + this.substring(index + 1);
 }
 
 

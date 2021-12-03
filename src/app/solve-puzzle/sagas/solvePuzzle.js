@@ -6,10 +6,9 @@ import api from "../../../config/api";
 import {types as modalTypes} from "../../modal";
 import {types as timerTypes} from "../../timer";
 
-const getSolvePuzzleState = (state) => state.solvePuzzle;
-const getUserState = (state) => state.user;
-const getTimerState = (state) => state.timer;
-const getFormState = (state) => state.form;
+export const getSolvePuzzleState = (state) => state.solvePuzzle;
+export const getUserState = (state) => state.user;
+export const getTimerState = (state) => state.timer;
 
 export function* watchChangeValue() {
     yield takeEvery(solvePuzzleTypes.CELL_VALUE_CHANGE, validateCellValueChangeSolve);
@@ -116,7 +115,6 @@ export function* savePuzzle(){
     const offsetDate = new Date(date.getTime() - (offset * 60 * 1000));
 
     try{
-        console.log(hashids.decode(loadedPuzzle.id)[0])
         const saveResponse = yield call(apiAxios.post, api.savePuzzle(), {
             user: userState.id,
             puzzle: hashids.decode(loadedPuzzle.id)[0],

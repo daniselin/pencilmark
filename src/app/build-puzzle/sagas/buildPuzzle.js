@@ -16,21 +16,124 @@ import {
 import {push} from "react-router-redux";
 import hashids from "../../../config/hashids";
 import {types as modalTypes} from "../../modal";
+import some from "lodash/some";
 
 export const getBuildPuzzleState = (state) => state.buildPuzzle;
 export const getUserState = (state) => state.user;
 export const getFormState = (state) => state.form;
 
+export function* watchDragCell() {
+    yield takeEvery(buildPuzzleTypes.CELL_DRAG, dragCell);
+};
+
+export function* dragCell(action){
+    const buildPuzzleState = yield select(getBuildPuzzleState);
+
+    const {selectedCells} = buildPuzzleState;
+    const selectedCell = {
+        box: action.box,
+        cell: action.cell,
+        row: action.row,
+        col: action.col
+    };
+    if (!some(selectedCells, selectedCell)) {
+        yield put({type: buildPuzzleTypes.ADD_SELECTED_CELL, selectedCell});
+    }
+}
+
+export function* watchInitializeControlDragCell() {
+    yield takeEvery(buildPuzzleTypes.INITIALIZE_CONTROL_CELL_DRAG, initializeControlDragCell);
+};
+
+export function* initializeControlDragCell(action){
+    const selectedCell = {
+        box: action.box,
+        cell: action.cell,
+        row: action.row,
+        col: action.col
+    };
+
+    const buildPuzzleState = yield select(getBuildPuzzleState);
+
+    const {selectedCells} = buildPuzzleState;
+
+    if (!some(selectedCells, selectedCell)) {
+        yield put({type: buildPuzzleTypes.ADDING_CELLS_TRUE});
+    } else {
+        yield put({type: buildPuzzleTypes.ADDING_CELLS_FALSE});
+    }
+}
+
+export function* watchControlDragCell() {
+    yield takeEvery(buildPuzzleTypes.CONTROL_CELL_DRAG, controlDragCell);
+};
+
+export function* controlDragCell(action){
+    const buildPuzzleState = yield select(getBuildPuzzleState);
+
+    const {selectedCells, addingCells} = buildPuzzleState;
+    const selectedCell = {
+        box: action.box,
+        cell: action.cell,
+        row: action.row,
+        col: action.col
+    };
+    console.log(selectedCell);
+    if (some(selectedCells, selectedCell) && !addingCells) {
+        yield put({type: buildPuzzleTypes.REMOVE_SELECTED_CELL, selectedCell});
+    } else if (!some(selectedCells, selectedCell) && addingCells) {
+        yield put({type: buildPuzzleTypes.ADD_SELECTED_CELL, selectedCell});
+    }
+}
+
+export function* watchControlClickCell() {
+    yield takeEvery(buildPuzzleTypes.CONTROL_CELL_CLICK, controlCellClick);
+};
+
+export function* controlCellClick(action){
+    const buildPuzzleState = yield select(getBuildPuzzleState);
+
+    const {selectedCells} = buildPuzzleState;
+    const selectedCell = {
+        box: action.box,
+        cell: action.cell,
+        row: action.row,
+        col: action.col
+    };
+
+    if (!some(selectedCells, selectedCell)) {
+        yield put({type: buildPuzzleTypes.ADD_SELECTED_CELL, selectedCell});
+    } else {
+        yield put({type: buildPuzzleTypes.REMOVE_SELECTED_CELL, selectedCell});
+    }
+}
+
 export function* watchChangeValue() {
-    yield takeEvery(buildPuzzleTypes.CELL_VALUE_CHANGE, validateCellValueChange);
+    yield takeEvery(buildPuzzleTypes.CELL_VALUE_CHANGE, validateCellValueDelete);
+};
+
+export function* validateCellValueDelete(){
+    yield put({type: buildPuzzleTypes.CELL_VALUE_CHANGE_INITIALIZE});
+
+    yield put({type: buildPuzzleTypes.CELL_VALUE_DELETE});
+
+    yield call(validateCells);
 };
 
 export function* watchDeleteValue() {
     yield takeEvery(buildPuzzleTypes.CELL_VALUE_DELETE, validateCellValueChange);
 };
 
-export function* validateCellValueChange(){
-    yield put({type: buildPuzzleTypes.CELL_VALUE_CHANGE_INITIALIZE})
+export function* validateCellValueChange(action){
+    yield put({type: buildPuzzleTypes.CELL_VALUE_CHANGE_INITIALIZE});
+    const {newValue} = action;
+
+    yield put({type: buildPuzzleTypes.CELL_VALUE_CHANGE_VALUES, newValue: newValue});
+
+    yield call(validateCells);
+};
+
+export function* validateCells(){
     const buildPuzzleState = yield select(getBuildPuzzleState);
 
     const {cells} = buildPuzzleState;
@@ -42,7 +145,7 @@ export function* validateCellValueChange(){
     } catch (error) {
         console.log(error);
     }
-};
+}
 
 export function* watchCreatePuzzleRequest() {
     yield takeEvery(buildPuzzleTypes.CREATE_PUZZLE_REQUEST, createPuzzle);
@@ -180,7 +283,7 @@ export function* savePuzzle(){
             yield put({type: buildPuzzleTypes.RESET_LOADED_PUZZLE});
             yield put({type: buildPuzzleTypes.INITIALIZE_BUILD_PUZZLE});
             } catch (e) {
-            yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: e.response.data.message["non_field_errors"][0]}})
+            yield put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: e.response.data.message["non_field_errors"]}})
         }
         }
 };
@@ -198,10 +301,14 @@ export function* initializeBuildPuzzle(){
     } else {
         yield put({type: formTypes.RESET_FORM});
     }
-    yield put({type: buildPuzzleTypes.SET_LOADED_PUZZLE});
+    if (loadedPuzzle.given_digits && buildPuzzleState.shouldLoadPuzzle){
+        yield put({type: buildPuzzleTypes.SET_LOADED_PUZZLE});
+    } else {
+        yield put({type: buildPuzzleTypes.RESET_FOCUS});
+    }
     yield put({type: buildPuzzleTypes.SHOULD_NOT_LOAD_PUZZLE});
 
-    yield call(validateCellValueChange);
+    yield call(validateCells);
     yield put({type: buildPuzzleTypes.INITIALIZE_BUILD_PUZZLE_SUCCESS});
 };
 
@@ -233,5 +340,9 @@ export default () => [
     watchSavePuzzleRequest(),
     watchInitializeBuildPuzzle(),
     watchStartNewPuzzle(),
-    watchRebuildPuzzle()
+    watchRebuildPuzzle(),
+    watchInitializeControlDragCell(),
+    watchDragCell(),
+    watchControlDragCell(),
+    watchControlClickCell()
 ];

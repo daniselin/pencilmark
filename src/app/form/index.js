@@ -4,7 +4,6 @@ import {assign, forEach, keys, omit} from "lodash";
 export const types = {
     ADD_FIELD_ERROR: "form/ADD_FIELD_ERROR",
     UPDATE_VALUE: "form/UPDATE_VALUE",
-    UPDATE_ALL_VALUES: "form/UPDATE_ALL_VALUES",
     RESET_FORM: "form/RESET_FORM",
     RESET_FOCUS: "form/RESET_FOCUS",
     RESET_FIELD_ERRORS: "form/RESET_FIELD_ERRORS",
@@ -52,18 +51,6 @@ export default (state = initialState, action) => {
                 };
             }
         }
-        case types.UPDATE_ALL_VALUES: {
-            const {updatedValues} = actions;
-            let updatedFieldErrors = assign({}, fieldErrors);
-            forEach(keys(updatedValues), (name) => {
-                delete updatedFieldErrors[name];
-            });
-            return {
-                ...state,
-                fieldErrors: updatedFieldErrors,
-                values: assign({}, values, updatedValues)
-            };
-        }
         case types.RESET_FORM:
             return {...initialState};
         case types.RESET_FOCUS:
@@ -106,9 +93,6 @@ export default (state = initialState, action) => {
 export const actions = {
     resetForm: () => {
         return {type: types.RESET_FORM};
-    },
-    updateValues: (updatedValues, pageKey) => {
-        return {type: types.UPDATE_ALL_VALUES, updatedValues, pageKey}
     },
     update: (name, value) => {
         return {type: types.UPDATE_VALUE, name, value};

@@ -1,16 +1,18 @@
 import {expectSaga, testSaga} from "redux-saga-test-plan";
 import {
-    createPuzzle,
+    controlCellClick,
+    controlDragCell,
+    createPuzzle, dragCell,
     getBuildPuzzleState,
     getFormState,
     getUserState,
-    initializeBuildPuzzle, rebuildPuzzle,
+    initializeBuildPuzzle, initializeControlDragCell, rebuildPuzzle,
     savePuzzle,
-    startNewPuzzle,
+    startNewPuzzle, validateCells,
     validateCellValueChange,
-    watchChangeValue,
-    watchCreatePuzzleRequest,
-    watchInitializeBuildPuzzle,
+    watchChangeValue, watchControlClickCell, watchControlDragCell,
+    watchCreatePuzzleRequest, watchDeleteValue, watchDragCell,
+    watchInitializeBuildPuzzle, watchInitializeControlDragCell,
     watchRebuildPuzzle,
     watchSavePuzzleRequest,
     watchStartNewPuzzle
@@ -63,40 +65,22 @@ test("changeCellValue - is triggered", () => {
 })
 
 test("deleteCellValue - is triggered", () => {
-    return expectSaga(watchChangeValue)
+    return expectSaga(watchDeleteValue)
         .withReducer(reducer)
         .provide({call: mockCalls, select: mockSelectors})
         .dispatch({type: buildPuzzleTypes.CELL_VALUE_DELETE})
         .silentRun();
-
 })
 
 test("validateCellValueChange - execution flow", () => {
-    testSaga(validateCellValueChange)
-        .next()
+    const action = {newValue: 1};
+    testSaga(validateCellValueChange, action)
+        .next({action: {newValue: 1}})
         .put({type: buildPuzzleTypes.CELL_VALUE_CHANGE_INITIALIZE}).next()
-        .select(getBuildPuzzleState).next({})
+        .put({type: buildPuzzleTypes.CELL_VALUE_CHANGE_VALUES, newValue: 1}).next()
         .call(
-            apiAxios.post,
-            api.checkPuzzle(),
-            {cells: undefined}
-        ).next({data: {}})
-        .put({type: buildPuzzleTypes.UPDATE_CONFLICT_CELLS, conflictCells: undefined}).next()
-
-
-        .isDone()
-})
-
-test("validateCellValueChange - failed call", () => {
-    testSaga(validateCellValueChange)
-        .next()
-        .put({type: buildPuzzleTypes.CELL_VALUE_CHANGE_INITIALIZE}).next()
-        .select(getBuildPuzzleState).next({})
-        .call(
-            apiAxios.post,
-            api.checkPuzzle(),
-            {cells: undefined}
-        ).throw({})
+            validateCells
+        ).next()
 
 
         .isDone()
@@ -140,6 +124,103 @@ test("createPuzzle - execution flow", () => {
         .put(push("/user/username")).next()
         .put({type: buildPuzzleTypes.RESET_LOADED_PUZZLE}).next()
         .put({type: buildPuzzleTypes.INITIALIZE_BUILD_PUZZLE}).next()
+
+
+        .isDone()
+})
+
+test("createPuzzle - error", () => {
+    testSaga(createPuzzle)
+        .next()
+        .select(getBuildPuzzleState).next({
+        cells: "845712693317956482296348715579834261431625978682197534953271846_28463159164589327",
+        loadedPuzzle: {id: 0},
+        conflictCells: ""
+        })
+        .select(getUserState).next({username: "username"})
+        .select(getFormState).next({values: {puzzleName: "testName", puzzleRules: "testRules"}})
+        .call(
+            apiAxios.post,
+            api.createPuzzle(), {
+                name: 'testName',
+                creator: undefined,
+                date: offsetDate.toISOString().split('T')[0],
+                given_digits: '845712693317956482296348715579834261431625978682197534953271846_28463159164589327',
+                solution_digits: '845712693317956482296348715579834261431625978682197534953271846728463159164589327',
+                cell_colors: '_________________________________________________________________________________',
+                completed: true,
+                rule_set: 'testRules',
+                diagonals: 0,
+                average_solve_time: '0:0:0',
+                average_rating: 11,
+                loaded_puzzle: 0
+            }
+        ).throw({response: {data: {message: {"non_field_errors": "message"}}}})
+        .put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "message"}}).next()
+
+
+        .isDone()
+})
+
+test("createPuzzle - no puzzle name", () => {
+    testSaga(createPuzzle)
+        .next()
+        .select(getBuildPuzzleState).next({
+        cells: "845712693317956482296348715579834261431625978682197534953271846_28463159164589327",
+        loadedPuzzle: {id: 0},
+        conflictCells: ""
+        })
+        .select(getUserState).next({username: "username"})
+        .select(getFormState).next({values: {puzzleRules: "testRules"}})
+        .put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: 'A puzzle name is required'}}).next()
+
+
+        .isDone()
+})
+
+test("createPuzzle - no puzzle rules", () => {
+    testSaga(createPuzzle)
+        .next()
+        .select(getBuildPuzzleState).next({
+        cells: "845712693317956482296348715579834261431625978682197534953271846_28463159164589327",
+        loadedPuzzle: {id: 0},
+        conflictCells: ""
+        })
+        .select(getUserState).next({username: "username"})
+        .select(getFormState).next({values: {puzzleName: "testName"}})
+        .put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: 'A rule set is required'}}).next()
+
+
+        .isDone()
+})
+
+test("createPuzzle - conflicts exist", () => {
+    testSaga(createPuzzle)
+        .next()
+        .select(getBuildPuzzleState).next({
+        cells: "845712693317956482296348715579834261431625978682197534953271846_28463159164589327",
+        loadedPuzzle: {id: 0},
+        conflictCells: [1, 2, 3]
+        })
+        .select(getUserState).next({username: "username"})
+        .select(getFormState).next({values: {puzzleName: "testName", puzzleRules: "testRules"}})
+        .put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: 'Conflicts exist with given digits.'}}).next()
+
+
+        .isDone()
+})
+
+test("createPuzzle - no unique solution exists", () => {
+    testSaga(createPuzzle)
+        .next()
+        .select(getBuildPuzzleState).next({
+        cells: "___________________________5_________431_________19_________1846_28463159_________",
+        loadedPuzzle: {id: 0},
+        conflictCells: ""
+        })
+        .select(getUserState).next({username: "username"})
+        .select(getFormState).next({values: {puzzleName: "testName", puzzleRules: "testRules"}})
+        .put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: 'No unique solution found'}}).next()
 
 
         .isDone()
@@ -190,6 +271,55 @@ test("savePuzzle - execution flow", () => {
         .isDone()
 })
 
+test("savePuzzle - no puzzle name", () => {
+    testSaga(savePuzzle)
+        .next()
+        .select(getBuildPuzzleState).next({
+        cells: "845712693317956482296348715579834261431625978682197534953271846_28463159164589327",
+        loadedPuzzle: {id: 0},
+        conflictCells: ""
+    })
+        .select(getUserState).next({username: "username"})
+        .select(getFormState).next({values: {puzzleRules: "testRules"}})
+        .put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: 'A puzzle name is required'}}).next()
+
+
+        .isDone()
+})
+
+test("savePuzzle - error", () => {
+    testSaga(savePuzzle)
+        .next()
+        .select(getBuildPuzzleState).next({
+        cells: "845712693317956482296348715579834261431625978682197534953271846_28463159164589327",
+        loadedPuzzle: {id: 0},
+        conflictCells: ""
+    })
+        .select(getUserState).next({username: "username"})
+        .select(getFormState).next({values: {puzzleName: "testName", puzzleRules: "testRules"}})
+        .call(
+            apiAxios.post,
+            api.createPuzzle(), {
+                name: 'testName',
+                creator: undefined,
+                date: offsetDate.toISOString().split('T')[0],
+                given_digits: '845712693317956482296348715579834261431625978682197534953271846_28463159164589327',
+                solution_digits: '_________________________________________________________________________________',
+                cell_colors: '_________________________________________________________________________________',
+                completed: false,
+                rule_set: 'testRules',
+                diagonals: 0,
+                average_solve_time: '0:0:0',
+                average_rating: 11,
+                loaded_puzzle: 0
+            }
+        ).throw({response: {data: {message: {"non_field_errors": "message"}}}})
+        .put({type: buildPuzzleTypes.CREATE_PUZZLE_FAILURE, error: {message: "message"}}).next()
+
+
+        .isDone()
+})
+
 test("initializePuzzleRequest - is triggered", () => {
     return expectSaga(watchInitializeBuildPuzzle)
         .withReducer(reducer)
@@ -207,9 +337,29 @@ test("initializeBuildPuzzle - execution flow", () => {
         conflictCells: ""
     })
         .put({type: formTypes.RESET_FORM}).next()
+        .put({type: buildPuzzleTypes.RESET_FOCUS}).next()
+        .put({type: buildPuzzleTypes.SHOULD_NOT_LOAD_PUZZLE}).next()
+        .call(validateCells).next()
+        .put({type: buildPuzzleTypes.INITIALIZE_BUILD_PUZZLE_SUCCESS}).next()
+
+
+        .isDone()
+})
+
+test("initializeBuildPuzzle - execution flow with loaded puzzle", () => {
+    testSaga(initializeBuildPuzzle)
+        .next()
+        .select(getBuildPuzzleState).next({
+        cells: "845712693317956482296348715579834261431625978682197534953271846_28463159164589327",
+        loadedPuzzle: {name: "name", rule_set: "rules", given_digits: "111"},
+        conflictCells: "",
+        shouldLoadPuzzle: true
+    })
+        .put({type: formTypes.UPDATE_VALUE, name: "puzzleName", value: "name"}).next()
+        .put({type: formTypes.UPDATE_VALUE, name: "puzzleRules", value: "rules"}).next()
         .put({type: buildPuzzleTypes.SET_LOADED_PUZZLE}).next()
         .put({type: buildPuzzleTypes.SHOULD_NOT_LOAD_PUZZLE}).next()
-        .call(validateCellValueChange).next()
+        .call(validateCells).next()
         .put({type: buildPuzzleTypes.INITIALIZE_BUILD_PUZZLE_SUCCESS}).next()
 
 
@@ -257,6 +407,137 @@ test("rebuildPuzzle - execution flow", () => {
         .put({type: formTypes.UPDATE_VALUE, name: "puzzleName", value: undefined}).next()
         .put({type: formTypes.UPDATE_VALUE, name: "puzzleRules", value: undefined}).next()
         .put({type: modalTypes.DESTROY_MODAL, id: "build-puzzle"}).next()
+
+        .isDone()
+})
+
+test("watchDragCell - is triggered", () => {
+    return expectSaga(watchDragCell)
+        .withReducer(reducer)
+        .provide({call: mockCalls, select: mockSelectors})
+        .dispatch({type: buildPuzzleTypes.CELL_DRAG})
+        .silentRun();
+})
+
+test("dragCell - execution flow", () => {
+    const action = {box: 1, cell: 1, row: 1, col: 1};
+    testSaga(dragCell, action)
+        .next()
+        .select(getBuildPuzzleState).next({selectedCells: []})
+        .put({type: buildPuzzleTypes.ADD_SELECTED_CELL, selectedCell: {box: 1, cell: 1, row: 1, col: 1}}).next()
+
+        .isDone()
+})
+
+test("watchControlDragCell - is triggered", () => {
+    return expectSaga(watchControlDragCell)
+        .withReducer(reducer)
+        .provide({call: mockCalls, select: mockSelectors})
+        .dispatch({type: buildPuzzleTypes.CONTROL_CELL_DRAG})
+        .silentRun();
+})
+
+test("controlDragCell - execution flow add cell", () => {
+    const action = {box: 1, cell: 1, row: 1, col: 1};
+    testSaga(controlDragCell, action)
+        .next()
+        .select(getBuildPuzzleState).next({selectedCells: [], addingCells: true})
+        .put({type: buildPuzzleTypes.ADD_SELECTED_CELL, selectedCell: {box: 1, cell: 1, row: 1, col: 1}}).next()
+
+        .isDone()
+})
+
+test("controlDragCell - execution flow remove cell", () => {
+    const action = {box: 1, cell: 1, row: 1, col: 1};
+    testSaga(controlDragCell, action)
+        .next()
+        .select(getBuildPuzzleState).next({selectedCells: [{box: 1, cell: 1, row: 1, col: 1}], addingCells: false})
+        .put({type: buildPuzzleTypes.REMOVE_SELECTED_CELL, selectedCell: {box: 1, cell: 1, row: 1, col: 1}}).next()
+
+        .isDone()
+})
+
+test("watchInitializeControlDragCell - is triggered", () => {
+    return expectSaga(watchInitializeControlDragCell)
+        .withReducer(reducer)
+        .provide({call: mockCalls, select: mockSelectors})
+        .dispatch({type: buildPuzzleTypes.INITIALIZE_CONTROL_CELL_DRAG})
+        .silentRun();
+})
+
+test("initializeControlDragCell - execution flow add cell", () => {
+    const action = {box: 1, cell: 1, row: 1, col: 1};
+    testSaga(initializeControlDragCell, action)
+        .next()
+        .select(getBuildPuzzleState).next({selectedCells: [], addingCells: true})
+        .put({type: buildPuzzleTypes.ADDING_CELLS_TRUE}).next()
+
+        .isDone()
+})
+
+test("initializeControlDragCell - execution flow remove cell", () => {
+    const action = {box: 1, cell: 1, row: 1, col: 1};
+    testSaga(initializeControlDragCell, action)
+        .next()
+        .select(getBuildPuzzleState).next({selectedCells: [{box: 1, cell: 1, row: 1, col: 1}], addingCells: false})
+        .put({type: buildPuzzleTypes.ADDING_CELLS_FALSE}).next()
+
+        .isDone()
+})
+
+test("watchControlClickCell - is triggered", () => {
+    return expectSaga(watchControlClickCell)
+        .withReducer(reducer)
+        .provide({call: mockCalls, select: mockSelectors})
+        .dispatch({type: buildPuzzleTypes.CONTROL_CELL_CLICK})
+        .silentRun();
+})
+
+test("controlClickCell - execution flow add cell", () => {
+    const action = {box: 1, cell: 1, row: 1, col: 1};
+    testSaga(controlCellClick, action)
+        .next()
+        .select(getBuildPuzzleState).next({selectedCells: [], addingCells: true})
+        .put({type: buildPuzzleTypes.ADD_SELECTED_CELL, selectedCell: {box: 1, cell: 1, row: 1, col: 1}}).next()
+
+        .isDone()
+})
+
+test("controlClickCell - execution flow remove cell", () => {
+    const action = {box: 1, cell: 1, row: 1, col: 1};
+    testSaga(controlCellClick, action)
+        .next()
+        .select(getBuildPuzzleState).next({selectedCells: [{box: 1, cell: 1, row: 1, col: 1}], addingCells: false})
+        .put({type: buildPuzzleTypes.REMOVE_SELECTED_CELL, selectedCell: {box: 1, cell: 1, row: 1, col: 1}}).next()
+
+        .isDone()
+})
+
+test("validateCells - execution flow", () => {
+    const action = {box: 1, cell: 1, row: 1, col: 1};
+    testSaga(validateCells, action)
+        .next()
+        .select(getBuildPuzzleState).next({cells: "123"})
+        .call(
+            apiAxios.post,
+            api.checkPuzzle(),
+            {cells: "123"}
+        ).next({data: {conflictCells: [{cell: 1}]}})
+        .put({type: buildPuzzleTypes.UPDATE_CONFLICT_CELLS, conflictCells: [{cell: 1}]}).next()
+
+        .isDone()
+})
+
+test("validateCells - failed flow", () => {
+    const action = {box: 1, cell: 1, row: 1, col: 1};
+    testSaga(validateCells, action)
+        .next()
+        .select(getBuildPuzzleState).next({cells: "123"})
+        .call(
+            apiAxios.post,
+            api.checkPuzzle(),
+            {cells: "123"}
+        ).throw({message: "error"})
 
         .isDone()
 })

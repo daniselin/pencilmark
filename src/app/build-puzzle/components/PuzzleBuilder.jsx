@@ -99,6 +99,7 @@ const PuzzleBuilder = (props) => {
                     <div className={width > 970 ? 'col-6' : 'col-12'}>
                         <PuzzleGrid/>
                     </div>
+                    <div className='col-1'></div>
                     <div className={width > 970 ? 'col-5' : 'col-12'}>
                         <KeyPad/>
                     </div>

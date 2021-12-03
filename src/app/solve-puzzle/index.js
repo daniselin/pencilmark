@@ -3856,7 +3856,7 @@ export default (state = initialState, action) => {
                 row: action.row,
                 col: action.col
             }
-            if (drugCell.row === state.selectedCell.row && drugCell.col === state.selectedCell.row) {
+            if (drugCell.row === state.selectedCell.row && drugCell.col === state.selectedCell.col) {
                 return {
                     ...state,
                     selectedCell: {
@@ -3864,7 +3864,8 @@ export default (state = initialState, action) => {
                         cell: 10,
                         row: 10,
                         col: 10
-                    }
+                    },
+                    addingCells: false
                 }
             }
             if (!some(state.selectedCells, drugCell)) {
@@ -4384,14 +4385,6 @@ export const actions = {
     savePuzzle: () => {
         return {type: types.SAVE_PUZZLE_REQUEST}
     }
-}
-
-String.prototype.replaceAt = function(index, replacement) {
-    if (index >= this.length) {
-        return this.valueOf();
-    }
-
-    return this.substring(0, index) + replacement + this.substring(index + 1);
 }
 
 

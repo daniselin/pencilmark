@@ -29,6 +29,9 @@ export const types = {
     UNFOLLOW_SUCCESS: "profile/UNFOLLOW_SUCCESS",
     FOLLOW_SUCCESS: "profile/FOLLOW_SUCCESS",
     FOLLOW_OR_UNFOLLOW_ERROR: "profile/FOLLOW_OR_UNFOLLOW_ERROR",
+
+    VIEW_LEADERBOARD: "profile/VIEW_LEADERBOARD",
+    VIEW_LEADERBOARD_SUCCESS: "profile/VIEW_LEADERBOARD_SUCCESS",
 }
 
 export const initialState = {
@@ -41,6 +44,7 @@ export const initialState = {
     isFollowing: false,
     isFollowActionLoading: false,
     isSectionLoading: false,
+    leaderboard: {}
 };
 
 export default (state = initialState, action) => {
@@ -114,6 +118,11 @@ export default (state = initialState, action) => {
                 ...state,
                 isFollowActionLoading: true
             }
+        case types.VIEW_LEADERBOARD_SUCCESS:
+            return {
+                ...state,
+                leaderboard: action.leaderboard
+            }
         default:
             return state
     }
@@ -155,6 +164,9 @@ export const actions = {
     },
     confirmDelete: () => {
         return {type: types.CONFIRM_DELETE}
+    },
+    viewLeaderboard: () => {
+        return {type: types.VIEW_LEADERBOARD}
     },
     followUnfollow: (id) => {
         return {type: types.FOLLOW_OR_UNFOLLOW, id}

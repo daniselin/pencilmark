@@ -124,7 +124,7 @@ const Modal = (props) => {
                                 onClick={destroy}
                                 label={cancelLabel}
                             />
-
+                            {onSubmit &&
                             <SubmitButton
                                 label={submitLabel}
                                 color={submitColor}
@@ -132,6 +132,7 @@ const Modal = (props) => {
                                 onClick={submit}
                                 loadingLabel={processingLabel}
                                 isLoading={isProcessing}/>
+                            }
                         </div>
                     </div>
                 </div>

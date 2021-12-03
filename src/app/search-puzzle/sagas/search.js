@@ -2,13 +2,11 @@ import {call, put, select, takeEvery} from "redux-saga/effects";
 import {types as puzzleTypes} from "../index";
 import apiAxios from "../../../config/axios";
 import api from "../../../config/api";
-import {goBack, push, replace} from "react-router-redux";
+import {push} from "react-router-redux";
 import hashids from "../../../config/hashids";
-import {types as profileTypes} from "../../profile";
 import {types as modalTypes} from "../../modal";
-import {getProfileState} from "../../profile/sagas/profile";
 
-const getPuzzleState = (state) => state.searchPuzzle;
+export const getPuzzleState = (state) => state.searchPuzzle;
 
 export function* watchInitializeSearch() {
     yield takeEvery(puzzleTypes.INITIALIZE_SEARCH, initializeSearch);
@@ -39,7 +37,6 @@ export function* submitSearch(action){
         yield put(push("?q=" + query));
 
         const response = yield call(apiAxios.post, api.searchPuzzles(), {query: query});
-        console.log(response.data);
         yield put({type:puzzleTypes.SUBMIT_SEARCH_SUCCESS, results: response.data.searchResults});
     }
     catch (e) {
@@ -52,7 +49,7 @@ export function* watchSolvePuzzle() {
     yield takeEvery(puzzleTypes.SOLVE_PUZZLE, solvePuzzle);
 };
 
-export function* solvePuzzle(action){
+export function* solvePuzzle(){
 
     const puzzleState = yield select(getPuzzleState);
 

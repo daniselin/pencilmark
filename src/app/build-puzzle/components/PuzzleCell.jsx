@@ -7,7 +7,6 @@ import some from "lodash/some";
 const mapStateToProps = (state) => {
     return {
         ...pick(state.buildPuzzle, [
-            "selectedCell",
             "selectedCells",
             "conflictCells"
         ])
@@ -20,7 +19,6 @@ const mapDispatchToProps = (dispatch) => {
 
 const PuzzleCell = (props) => {
     const {
-        selectedCell,
         selectedCells,
         conflictCells,
         height,
@@ -32,12 +30,14 @@ const PuzzleCell = (props) => {
         value
     } = props;
 
-    const isSelected = (selectedCell.row === row && selectedCell.col === col) ||
-        (some(selectedCells, {box: box, cell: cell, row: row, col: col}));
+    const isSelected = (some(selectedCells, {box: box, cell: cell, row: row, col: col}));
+    let isSelectedInBoxRowCol = false;
 
-    const isSelectedInBoxRowCol = (selectedCell.box === box ||
-        selectedCell.row === row  ||
-        selectedCell.col === col);
+    if (selectedCells.length === 1) {
+        isSelectedInBoxRowCol = (selectedCells[0].box === box ||
+            selectedCells[0].row === row  ||
+            selectedCells[0].col === col);
+    }
 
     const isConflict = (some(conflictCells, {row: row, col: col}));
 
