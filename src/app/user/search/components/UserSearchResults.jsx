@@ -8,6 +8,7 @@ import {actions as userActions} from "../../index";
 import {find, map} from "lodash";
 import SavedPuzzle from "../../../profile/components/SavedPuzzle";
 import UserCard from "../../components/UserCard";
+import NotAuthenticated from "../../../NotAuthenticated";
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -17,7 +18,8 @@ const mapStateToProps = (state, ownProps) => {
         ]),
         ...pick(state.user, [
             "userSearchResults",
-            "following"
+            "following",
+            "hasAuthenticated"
         ]),
         ...pick(state.windowSize, ["width"])
     };
@@ -38,6 +40,7 @@ const UserSearchResults = (props) => {
         userSearchResults,
         following,
         width,
+        hasAuthenticated,
         actions,
     } = props;
 
@@ -49,35 +52,38 @@ const UserSearchResults = (props) => {
     const q = params ? params["q"] : "";
 
     return(
-        <div className="container-fluid justify-content-center">
-            <div className="row justify-content-center">
-                <div className="col-6">
-                    <TextField
-                        autoFocus={true}
-                        defaultValue={q}
-                        placeholder="Search For Users"
-                        storeUpdatedValue={false}
-                        id="userSearch"
-                    />
+        hasAuthenticated ?
+            <div className="container-fluid justify-content-center">
+                <div className="row justify-content-center">
+                    <div className="col-6">
+                        <TextField
+                            autoFocus={true}
+                            defaultValue={q}
+                            placeholder="Search For Users"
+                            storeUpdatedValue={false}
+                            id="userSearch"
+                        />
+                    </div>
+                    <div className="col-1">
+                        <SubmitButton label="Search" color="primary" onClick={(e) => {submitSearch(document.getElementById("userSearch").value)}}/>
+                    </div>
                 </div>
-                <div className="col-1">
-                    <SubmitButton label="Search" color="primary" onClick={(e) => {submitSearch(document.getElementById("userSearch").value)}}/>
+                <br/>
+                <br/>
+                <div className="row justify-content-center text-center">
+                    {map(userSearchResults, (user, i) =>
+                        <div className={width < 970 ? "col-6" : "col-4"}>
+                            <UserCard key={user["username"]} user={userSearchResults[i]} isFollowing={
+                                find(following, (follower) => {
+                                    return follower.following === user["id"]
+                                })} onClick={(e) => {
+                                selectProfile(user["username"])
+                            }}/>
+                        </div> )}
                 </div>
             </div>
-            <br/>
-            <br/>
-            <div className="row justify-content-center text-center">
-                {map(userSearchResults, (user, i) =>
-                    <div className={width < 970 ? "col-6" : "col-4"}>
-                        <UserCard key={user["username"]} user={userSearchResults[i]} isFollowing={
-                            find(following, (follower) => {
-                                return follower.following === user["id"]
-                            })} onClick={(e) => {
-                            selectProfile(user["username"])
-                        }}/>
-                    </div> )}
-            </div>
-        </div>
+            :
+            <NotAuthenticated/>
     );
 };
 

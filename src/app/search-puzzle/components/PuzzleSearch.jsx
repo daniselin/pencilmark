@@ -5,6 +5,7 @@ import React, {useCallback, useEffect} from "react";
 import {connect} from "react-redux";
 import {pick} from "lodash/object";
 import Loading from "../../layout/Loading";
+import NotAuthenticated from "../../NotAuthenticated";
 
 
 const mapStateToProps = (state, ownProps) => {

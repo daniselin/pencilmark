@@ -1,6 +1,7 @@
 import some from "lodash/some";
 import forEach from "lodash/forEach";
 import "../utils";
+import {index} from "../utils";
 
 export const types = {
     INITIALIZE_BUILD_PUZZLE: "build-puzzle/INITIALIZE_BUILD_PUZZLE",
@@ -26,6 +27,7 @@ export const types = {
 
     CELL_VALUE_CHANGE_INITIALIZE: "build-puzzle/CELL_VALUE_CHANGE_INITIALIZE",
     CELL_VALUE_DELETE: "build-puzzle/CELL_VALUE_DELETE",
+    CELL_VALUE_DELETE_VALUES: "build-puzzle/CELL_VALUE_DELETE_VALUES",
     FOCUS_OFF_CELLS: "build-puzzle/FOCUS_OFF_CELLS",
     UPDATE_CONFLICT_CELLS: "build-puzzle/UPDATE_CONFLICT_CELLS",
     CREATE_PUZZLE_REQUEST: "build-puzzle/CREATE_PUZZLE_REQUEST",
@@ -133,7 +135,8 @@ export default (state = initialState, action) => {
             const cells = {...state.cells};
             const newValue = action.newValue;
             forEach(selectedCells, (cell) => {
-                const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
+                const selectedCellIndex = index(cell.col, cell.row);
+                console.log(selectedCellIndex, cell)
                 cells[selectedCellIndex] = newValue;
             });
 
@@ -142,7 +145,7 @@ export default (state = initialState, action) => {
                 cells: Object.values(cells).join('')
             }
         }
-        case types.CELL_VALUE_DELETE: {
+        case types.CELL_VALUE_DELETE_VALUES: {
             const selectedCells = [...state.selectedCells];
             const cells = {...state.cells};
 

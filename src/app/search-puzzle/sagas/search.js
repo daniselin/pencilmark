@@ -7,6 +7,7 @@ import hashids from "../../../config/hashids";
 import {types as modalTypes} from "../../modal";
 
 export const getPuzzleState = (state) => state.searchPuzzle;
+export const getUserState = (state) => state.user;
 
 export function* watchInitializeSearch() {
     yield takeEvery(puzzleTypes.INITIALIZE_SEARCH, initializeSearch);

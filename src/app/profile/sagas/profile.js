@@ -33,6 +33,7 @@ export function* initializeProfile(action){
         yield put({type: profileTypes.INITIALIZE_PROFILE_SUCCESS, response: response.data});
     } catch (e) {
         console.log(e);
+        yield put({type: profileTypes.INITIALIZE_PROFILE_FAILURE});
     }
 };
 

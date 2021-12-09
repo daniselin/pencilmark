@@ -109,19 +109,19 @@ export function* controlCellClick(action){
 }
 
 export function* watchChangeValue() {
-    yield takeEvery(buildPuzzleTypes.CELL_VALUE_CHANGE, validateCellValueDelete);
+    yield takeEvery(buildPuzzleTypes.CELL_VALUE_CHANGE, validateCellValueChange);
 };
 
 export function* validateCellValueDelete(){
     yield put({type: buildPuzzleTypes.CELL_VALUE_CHANGE_INITIALIZE});
 
-    yield put({type: buildPuzzleTypes.CELL_VALUE_DELETE});
+    yield put({type: buildPuzzleTypes.CELL_VALUE_DELETE_VALUES});
 
     yield call(validateCells);
 };
 
 export function* watchDeleteValue() {
-    yield takeEvery(buildPuzzleTypes.CELL_VALUE_DELETE, validateCellValueChange);
+    yield takeEvery(buildPuzzleTypes.CELL_VALUE_DELETE, validateCellValueDelete);
 };
 
 export function* validateCellValueChange(action){

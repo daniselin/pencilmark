@@ -3,6 +3,7 @@ import {filter} from "lodash";
 export const types = {
     INITIALIZE_PROFILE: "profile/INITIALIZE_PROFILE",
     INITIALIZE_PROFILE_SUCCESS: "profile/INITIALIZE_PROFILE_SUCCESS",
+    INITIALIZE_PROFILE_FAILURE: "profile/INITIALIZE_PROFILE_FAILURE",
     SELECT_SAVED_PUZZLE: "profile/SELECT_SAVED_PUZZLE",
     RESUME_SAVED_PUZZLE: "profile/RESUME_SAVED_PUZZLE",
     SELECT_SAVED_SOLUTION: "profile/SELECT_SAVED_SOLUTION",
@@ -63,6 +64,10 @@ export default (state = initialState, action) => {
                 savedSolutions: action.response.savedSolutions,
                 profile: action.response.profile,
                 isFollowing: action.response.isFollowing,
+                isLoading: false
+            }
+        case types.INITIALIZE_PROFILE_FAILURE:
+            return {
                 isLoading: false
             }
         case types.SELECT_COMPLETED_PUZZLE:

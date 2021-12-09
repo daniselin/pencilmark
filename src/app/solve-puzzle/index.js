@@ -13,6 +13,7 @@ import {
 export const types = {
     INITIALIZE_SOLVE_PUZZLE: "solve-puzzle/INITIALIZE_SOLVE_PUZZLE",
     INITIALIZE_SOLVE_PUZZLE_SUCCESS: "solve-puzzle/INITIALIZE_SOLVE_PUZZLE_SUCCESS",
+    INITIALIZE_SOLVE_PUZZLE_FAILURE: "solve-puzzle/INITIALIZE_SOLVE_PUZZLE_FAILURE",
 
     CELL_CLICK: "solve-puzzle/CELL_CLICK",
     CONTROL_CELL_CLICK: "solve-puzzle/CONTROL_CELL_CLICK",
@@ -3745,6 +3746,11 @@ export default (state = initialState, action) => {
                     loadedPuzzle: action.puzzle.puzzle
                 }
             }
+        case types.INITIALIZE_SOLVE_PUZZLE_FAILURE:
+            return {
+                ...state,
+                isLoading: false
+            }
         case types.CELL_CLICK: {
             const {box, cell, row, col} = action;
             return {
@@ -3997,12 +4003,8 @@ export default (state = initialState, action) => {
                         cellColors[selectedCellIndex] = value === "0" ? "_" : value;
                     } else {
                         forEach(selectedCells, (cell) => {
-                            if (loadedPuzzle.given_digits.charAt(index(cell.col, cell.row)) !== cellColors[index(cell.col, cell.row)] ||
-                                cellColors[index(cell.col, cell.row)] === "_") {
-
-                                const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
-                                cellColors[selectedCellIndex] = value === "0" ? "_" : value;
-                            }
+                            const selectedCellIndex = (cell.col - 1) * 9 + (cell.row - 1);
+                            cellColors[selectedCellIndex] = value === "0" ? "_" : value;
                         });
                     }
                     return {

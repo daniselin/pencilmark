@@ -35,6 +35,7 @@ import {types as buildPuzzleTypes} from "../../build-puzzle";
 import {getFormState} from "../../user/sagas/user";
 import {types as solvePuzzleTypes} from "../../solve-puzzle";
 import {types as timerTypes} from "../../timer";
+import {put} from "redux-saga/effects";
 
 const mockCalls = (effect, next) => {
     if (effect.fn === apiAxios.get && effect.args[0].endsWith("/profile/newUser/")) {
@@ -88,6 +89,7 @@ test("initializeProfile - failed call", () => {
     testSaga(initializeProfile, action)
         .next({action: {username: "newUser"}})
         .call(apiAxios.get, api.getProfile("newUser")).throw({message: "error"})
+        .put({type: profileTypes.INITIALIZE_PROFILE_FAILURE}).next()
         .isDone()
 })
 

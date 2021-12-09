@@ -84,7 +84,7 @@ describe('build puzzle reducer', () => {
 
     it('should delete cell values', () => {
         const action = {
-            type: buildPuzzleActions.CELL_VALUE_DELETE
+            type: buildPuzzleActions.CELL_VALUE_DELETE_VALUES
         };
         expect(buildPuzzle({selectedCells: [{row: 1, col: 2}], cells: "123456789789"}, action)).toEqual({
             cells: "123456789_89",

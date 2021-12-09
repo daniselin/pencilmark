@@ -50,15 +50,18 @@ export function* initializeSolvePuzzle(action){
     } = action;
 
     const solvePuzzleState = yield select(getSolvePuzzleState);
+    try {
+        let response = yield call(apiAxios.get, api.getPuzzle(hashids.decode(id)));
+        response.data.puzzle.id = hashids.encode(response.data.puzzle.id);
+        yield put({type: solvePuzzleTypes.INITIALIZE_SOLVE_PUZZLE_SUCCESS, puzzle: response.data});
 
-    let response = yield call(apiAxios.get, api.getPuzzle(hashids.decode(id)));
-    response.data.puzzle.id = hashids.encode(response.data.puzzle.id);
-    yield put({type: solvePuzzleTypes.INITIALIZE_SOLVE_PUZZLE_SUCCESS, puzzle: response.data});
-
-    if (!solvePuzzleState.savedPuzzle) {
-        yield put({type: timerTypes.RESET_TIMER});
-    } else {
-        yield put({type: timerTypes.START_TIMER});
+        if (!solvePuzzleState.savedPuzzle) {
+            yield put({type: timerTypes.RESET_TIMER});
+        } else {
+            yield put({type: timerTypes.START_TIMER});
+        }
+    } catch (e) {
+        yield put({type: solvePuzzleTypes.INITIALIZE_SOLVE_PUZZLE_FAILURE});
     }
 
 };

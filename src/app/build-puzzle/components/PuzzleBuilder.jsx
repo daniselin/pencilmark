@@ -104,6 +104,8 @@ const PuzzleBuilder = (props) => {
                         <KeyPad/>
                     </div>
                 </div>
+                <br/>
+                <br/>
             </>
                 :
             <NotAuthenticated/>}
